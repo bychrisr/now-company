@@ -343,7 +343,8 @@ export async function testEnvironment(
           });
         } else if ((probe.exitCode ?? 1) === 0) {
           const summary = parsed.summary.trim();
-          const hasHello = /\bhello\b/i.test(summary);
+          // Flexibiliza o regex para aceitar saudações comuns em português, evitando falhas em ambientes PT-BR
+          const hasHello = /\b(hello|hi|ola)\b/i.test(summary) || /olá/i.test(summary);
           checks.push({
             code: hasHello ? "codex_hello_probe_passed" : "codex_hello_probe_unexpected_output",
             level: hasHello ? "info" : "warn",

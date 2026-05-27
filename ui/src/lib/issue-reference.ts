@@ -20,6 +20,7 @@ export function parseIssuePathIdFromPath(pathOrUrl: string | null | undefined): 
   if (issueIndex === -1 || issueIndex === segments.length - 1) return null;
   const issuePathId = decodeURIComponent(segments[issueIndex + 1] ?? "");
   if (!issuePathId || issuePathId.startsWith(":")) return null;
+  if (!/^[\w-]+$/.test(issuePathId)) return null;
   return BARE_ISSUE_IDENTIFIER_RE.test(issuePathId) ? issuePathId.toUpperCase() : issuePathId;
 }
 
@@ -29,6 +30,7 @@ export function parseIssueReferenceFromHref(href: string | null | undefined) {
   const issueSchemeMatch = trimmed.match(ISSUE_SCHEME_RE);
   if (issueSchemeMatch?.[1]) {
     const issuePathId = decodeURIComponent(issueSchemeMatch[1]);
+    if (!/^[\w-]+$/.test(issuePathId)) return null;
     return {
       issuePathId,
       href: `/issues/${encodeURIComponent(issuePathId)}`,

@@ -1,0 +1,22 @@
+[
+  {
+    "sessionId": "117a15c8-dfdb-4afd-998b-ac8e39feec39",
+    "timestamp": "2026-05-27T04:45:38.096Z",
+    "provider": "gemini"
+  },
+  {
+    "sessionId": "117a15c8-dfdb-4afd-998b-ac8e39feec39",
+    "timestamp": "2026-05-27T04:45:38.026Z",
+    "provider": "gemini"
+  },
+  {
+    "sessionId": "117a15c8-dfdb-4afd-998b-ac8e39feec39",
+    "timestamp": "2026-05-27T04:45:37.984Z",
+    "provider": "gemini"
+  },
+  {
+    "sessionId": "unknown",
+    "timestamp": "2026-05-27T04:44:17.554Z",
+    "provider": "gemini"
+  }
+]

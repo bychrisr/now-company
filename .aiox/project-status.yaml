@@ -1,0 +1,19 @@
+status:
+  branch: init
+  modifiedFiles:
+    - .env.example
+    - .gitignore
+    - AGENTS.md
+    - packages/adapters/claude-local/src/server/parse.ts
+    - packages/adapters/claude-local/src/server/test.ts
+  modifiedFilesTotalCount: 38
+  recentCommits:
+    - 'fix(hooks): rename hooks to .cjs to avoid ESM require error'
+    - 'chore: setup local development dependencies and auto migrations'
+  currentEpic: null
+  currentStory: null
+  lastUpdate: '2026-05-27T04:42:35.321Z'
+  isGitRepo: true
+timestamp: 1779856955323
+ttl: 60
+gitFingerprint: 1779850948863.0918:1779856897341.361
