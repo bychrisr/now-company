@@ -174,6 +174,7 @@ export const currentUserProfileSchema = z.object({
   email: z.string().email().nullable(),
   name: z.string().min(1).max(120).nullable(),
   image: profileImageSchema.nullable(),
+  locale: z.string().min(2).max(10).default("en"),
 });
 
 export type CurrentUserProfile = z.infer<typeof currentUserProfileSchema>;
@@ -194,6 +195,7 @@ export const updateCurrentUserProfileSchema = z.object({
     .union([profileImageSchema, z.literal(""), z.null()])
     .optional()
     .transform((value) => value === "" ? null : value),
+  locale: z.string().min(2).max(10).optional(),
 });
 
 export type UpdateCurrentUserProfile = z.infer<typeof updateCurrentUserProfileSchema>;

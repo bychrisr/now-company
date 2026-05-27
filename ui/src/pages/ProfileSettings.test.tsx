@@ -6,6 +6,15 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ProfileSettings } from "./ProfileSettings";
 
+vi.mock("react-i18next", () => ({
+  useTranslation: () => ({
+    t: (key: string, options?: { defaultValue: string }) => options?.defaultValue ?? key,
+    i18n: {
+      changeLanguage: vi.fn(),
+    },
+  }),
+}));
+
 const mockAuthApi = vi.hoisted(() => ({
   getSession: vi.fn(),
   signInEmail: vi.fn(),
@@ -67,17 +76,19 @@ describe("ProfileSettings", () => {
         name: "Jane Example",
         email: "jane@example.com",
         image: "https://example.com/jane.png",
+        locale: "en",
       },
     });
     mockAssetsApi.uploadImage.mockResolvedValue({
       assetId: "asset-1",
       contentPath: "/api/assets/asset-1/content",
     });
-    mockAuthApi.updateProfile.mockImplementation(async (input: { name: string; image: string | null }) => ({
+    mockAuthApi.updateProfile.mockImplementation(async (input: { name: string; image: string | null, locale: string }) => ({
       id: "user-1",
       name: input.name,
       email: "jane@example.com",
       image: input.image,
+      locale: input.locale,
     }));
   });
 
@@ -124,6 +135,7 @@ describe("ProfileSettings", () => {
     expect(mockAuthApi.updateProfile).toHaveBeenCalledWith({
       name: "Jane Example",
       image: "/api/assets/asset-1/content",
+      locale: "en",
     });
 
     await act(async () => {

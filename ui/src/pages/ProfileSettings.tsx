@@ -12,6 +12,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { LOCALE_NAMES } from "@/i18n/locales";
+import { sufficientlyTranslatedLocales } from "@/i18n/generated/locales-metadata";
 
 function deriveInitials(name: string) {
   const parts = name.trim().split(/\s+/).filter(Boolean);
@@ -20,7 +23,7 @@ function deriveInitials(name: string) {
 }
 
 export function ProfileSettings() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { setBreadcrumbs } = useBreadcrumbs();
   const { selectedCompanyId, selectedCompany } = useCompany();
   const queryClient = useQueryClient();
@@ -28,6 +31,7 @@ export function ProfileSettings() {
   const avatarInputRef = useRef<HTMLInputElement | null>(null);
   const [name, setName] = useState("");
   const [image, setImage] = useState("");
+  const [locale, setLocale] = useState(i18n.language || "en");
   const [actionError, setActionError] = useState<string | null>(null);
   const sessionQuery = useQuery({
     queryKey: queryKeys.auth.session,
@@ -47,7 +51,11 @@ export function ProfileSettings() {
     if (!session) return;
     setName(session.user.name ?? "");
     setImage(session.user.image ?? "");
-  }, [sessionQuery.data]);
+    if (session.user.locale) {
+      setLocale(session.user.locale);
+      void i18n.changeLanguage(session.user.locale);
+    }
+  }, [sessionQuery.data, i18n]);
 
   function syncSessionProfile(profile: CurrentUserProfile) {
     queryClient.setQueryData<AuthSession | null>(queryKeys.auth.session, (current) => {
@@ -65,6 +73,9 @@ export function ProfileSettings() {
   async function persistProfile(input: UpdateCurrentUserProfile) {
     const profile = await authApi.updateProfile(input);
     syncSessionProfile(profile);
+    if (profile.locale) {
+      void i18n.changeLanguage(profile.locale);
+    }
     return profile;
   }
 
@@ -78,6 +89,7 @@ export function ProfileSettings() {
       setActionError(null);
       setName(profile.name ?? "");
       setImage(profile.image ?? "");
+      setLocale(profile.locale ?? "en");
     },
     onError: (error) => {
       setActionError(error instanceof Error ? error.message : t("pages.profileSettings.updateError", { defaultValue: "Failed to update profile." }));
@@ -95,12 +107,13 @@ export function ProfileSettings() {
         file,
         `profiles/${sessionQuery.data?.user.id ?? "board-user"}`,
       );
-      return persistProfile({ name: resolveProfileName(), image: asset.contentPath });
+      return persistProfile({ name: resolveProfileName(), image: asset.contentPath, locale });
     },
     onSuccess: (profile) => {
       setActionError(null);
       setName(profile.name ?? "");
       setImage(profile.image ?? "");
+      setLocale(profile.locale ?? "en");
     },
     onError: (error) => {
       setActionError(error instanceof Error ? error.message : t("pages.profileSettings.uploadError", { defaultValue: "Failed to upload avatar." }));
@@ -108,11 +121,12 @@ export function ProfileSettings() {
   });
 
   const removeAvatarMutation = useMutation({
-    mutationFn: () => persistProfile({ name: resolveProfileName(), image: null }),
+    mutationFn: () => persistProfile({ name: resolveProfileName(), image: null, locale }),
     onSuccess: (profile) => {
       setActionError(null);
       setName(profile.name ?? "");
       setImage(profile.image ?? "");
+      setLocale(profile.locale ?? "en");
     },
     onError: (error) => {
       setActionError(error instanceof Error ? error.message : t("pages.profileSettings.removeAvatarError", { defaultValue: "Failed to remove avatar." }));
@@ -232,7 +246,7 @@ export function ProfileSettings() {
           className="grid gap-6 md:grid-cols-2"
           onSubmit={(event) => {
             event.preventDefault();
-            updateMutation.mutate({ name: resolveProfileName(), image: image.trim() || null });
+            updateMutation.mutate({ name: resolveProfileName(), image: image.trim() || null, locale });
           }}
         >
           <div className="space-y-2">
@@ -259,6 +273,25 @@ export function ProfileSettings() {
             />
             <p className="text-xs text-muted-foreground">
               {t("pages.profileSettings.email.hint", { defaultValue: "Email is managed by your auth session and is read-only here." })}
+            </p>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="profile-language">{t("pages.profileSettings.language.label", { defaultValue: "Language" })}</Label>
+            <Select value={locale} onValueChange={setLocale}>
+              <SelectTrigger id="profile-language">
+                <SelectValue placeholder={t("pages.profileSettings.language.placeholder", { defaultValue: "Select language" })} />
+              </SelectTrigger>
+              <SelectContent>
+                {sufficientlyTranslatedLocales.map((code) => (
+                  <SelectItem key={code} value={code}>
+                    {LOCALE_NAMES[code] ?? code}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <p className="text-xs text-muted-foreground">
+              {t("pages.profileSettings.language.hint", { defaultValue: "Choose your preferred language for the interface." })}
             </p>
           </div>
 
