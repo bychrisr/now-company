@@ -58,3 +58,22 @@ tests/release-smoke/playwright-report/
 .superpowers/
 .claude/worktrees/
 .herenow
+
+# Environment & Secrets (AIOX)
+.env.local
+.env.*.local
+*.key
+*.pem
+
+# Build & Logs (AIOX)
+build/
+*.log
+logs/
+
+# IDE & OS (AIOX)
+Thumbs.db
+*.swp
+
+# AIOX Local (AIOX)
+.aiox-core/local/
+.aiox/install-log.txt
