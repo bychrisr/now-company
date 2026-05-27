@@ -325,7 +325,16 @@ describe("NewIssueDialog", () => {
     ]);
     mockAgentsApi.list.mockResolvedValue([]);
     mockAgentsApi.adapterModels.mockResolvedValue([]);
-    mockAuthApi.getSession.mockResolvedValue({ user: { id: "user-1" } });
+    mockAuthApi.getSession.mockResolvedValue({
+      session: { id: "session-1", userId: "user-1" },
+      user: {
+        id: "user-1",
+        name: "Test User",
+        email: "test@example.com",
+        image: null,
+        locale: "en",
+      },
+    });
     mockAssetsApi.uploadImage.mockResolvedValue({ contentPath: "/uploads/asset.png" });
     mockInstanceSettingsApi.getExperimental.mockResolvedValue({ enableIsolatedWorkspaces: false });
     localStorage.clear();

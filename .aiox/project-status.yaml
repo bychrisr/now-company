@@ -1,19 +1,20 @@
 status:
-  branch: init
+  branch: feat/translations
   modifiedFiles:
-    - .env.example
-    - .gitignore
-    - AGENTS.md
-    - packages/adapters/claude-local/src/server/parse.ts
-    - packages/adapters/claude-local/src/server/test.ts
-  modifiedFilesTotalCount: 38
+    - ui/src/components/Sidebar.tsx
+    - ui/src/i18n/locales/en.json
+    - ui/src/i18n/locales/pt-BR.json
+    - ui/src/pages/Dashboard.tsx
+  modifiedFilesTotalCount: 4
   recentCommits:
-    - 'fix(hooks): rename hooks to .cjs to avoid ESM require error'
-    - 'chore: setup local development dependencies and auto migrations'
+    - >-
+      feat(aiox): integrate Synkra AIOX and fix adapter parsing/ui references
+      (#1)
+    - '[codex] Add document annotations and comments (#6733)'
   currentEpic: null
   currentStory: null
-  lastUpdate: '2026-05-27T04:42:35.321Z'
+  lastUpdate: '2026-05-27T04:56:17.350Z'
   isGitRepo: true
-timestamp: 1779856955323
+timestamp: 1779857777352
 ttl: 60
-gitFingerprint: 1779850948863.0918:1779856897341.361
+gitFingerprint: 1779857614580.6653:1779857552332.3599

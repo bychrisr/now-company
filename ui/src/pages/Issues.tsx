@@ -7,6 +7,7 @@ import { projectsApi } from "../api/projects";
 import { heartbeatsApi } from "../api/heartbeats";
 import { useCompany } from "../context/CompanyContext";
 import { useBreadcrumbs } from "../context/BreadcrumbContext";
+import { useTranslation } from "../i18n";
 import { collectLiveIssueIds } from "../lib/liveIssueIds";
 import { queryKeys } from "../lib/queryKeys";
 import { createIssueDetailLocationState } from "../lib/issueDetailBreadcrumb";
@@ -58,6 +59,7 @@ export function buildIssuesSearchUrl(currentHref: string, search: string): strin
 export function Issues() {
   const { selectedCompanyId } = useCompany();
   const { setBreadcrumbs } = useBreadcrumbs();
+  const { t } = useTranslation();
   const location = useLocation();
   const [searchParams] = useSearchParams();
   const queryClient = useQueryClient();
@@ -108,16 +110,16 @@ export function Issues() {
   const issueLinkState = useMemo(
     () =>
       createIssueDetailLocationState(
-        "Issues",
+        t("pages.issues.title", { defaultValue: "Issues" }),
         `${location.pathname}${location.search}${location.hash}`,
         "issues",
       ),
-    [location.pathname, location.search, location.hash],
+    [location.pathname, location.search, location.hash, t],
   );
 
   useEffect(() => {
-    setBreadcrumbs([{ label: "Issues" }]);
-  }, [setBreadcrumbs]);
+    setBreadcrumbs([{ label: t("pages.issues.title", { defaultValue: "Issues" }) }]);
+  }, [setBreadcrumbs, t]);
 
   const issuePageSize = workspaceIdFilter ? WORKSPACE_FILTER_ISSUE_LIMIT : ISSUES_PAGE_SIZE;
 
@@ -175,7 +177,7 @@ export function Issues() {
   });
 
   if (!selectedCompanyId) {
-    return <EmptyState icon={CircleDot} message="Select a company to view issues." />;
+    return <EmptyState icon={CircleDot} message={t("pages.issues.selectCompany", { defaultValue: "Select a company to view issues." })} />;
   }
 
   return (

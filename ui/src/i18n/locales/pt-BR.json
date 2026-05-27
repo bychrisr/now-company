@@ -5,5 +5,361 @@
       "description": "Comece criando uma empresa.",
       "newCompany": "Nova empresa"
     }
+  },
+  "sidebar": {
+    "newIssue": "Novo Chamado",
+    "dashboard": "Painel",
+    "inbox": "Caixa de Entrada",
+    "work": "Trabalho",
+    "issues": "Chamados",
+    "routines": "Rotinas",
+    "goals": "Metas",
+    "workspaces": "Ambientes",
+    "company": "Empresa",
+    "org": "Organograma",
+    "skills": "Habilidades",
+    "costs": "Custos",
+    "activity": "Atividade",
+    "settings": "Configurações"
+  },
+  "dashboard": {
+    "emptyState": {
+      "welcome": "Bem-vindo ao Paperclip. Configure sua primeira empresa e agente para começar.",
+      "action": "Começar",
+      "noCompany": "Crie ou selecione uma empresa para visualizar o painel."
+    },
+    "noAgents": {
+      "title": "Você não tem agentes.",
+      "action": "Crie um aqui"
+    },
+    "budgetIncident": {
+      "title_one": "{{count}} incidente de orçamento ativo",
+      "title_other": "{{count}} incidentes de orçamento ativos",
+      "subtitle": "{{pausedAgents}} agentes pausados · {{pausedProjects}} projetos pausados · {{pendingApprovals}} aprovações de orçamento pendentes",
+      "action": "Abrir orçamentos"
+    },
+    "metrics": {
+      "agentsEnabled": "Agentes Ativos",
+      "agentsDescription": "{{running}} rodando, {{paused}} pausados, {{error}} erros",
+      "tasksInProgress": "Tarefas em Andamento",
+      "tasksDescription": "{{open}} abertas, {{blocked}} bloqueadas",
+      "monthSpend": "Gasto do Mês",
+      "monthSpendDescription": "{{percent}}% de {{budget}} do orçamento",
+      "unlimitedBudget": "Orçamento ilimitado",
+      "pendingApprovals": "Aprovações Pendentes",
+      "budgetOverrides": "{{count}} revisões de orçamento aguardando revisão da diretoria",
+      "awaitingReview": "Aguardando revisão da diretoria"
+    },
+    "charts": {
+      "runActivity": "Atividade de Execução",
+      "issuesByPriority": "Chamados por Prioridade",
+      "issuesByStatus": "Chamados por Status",
+      "successRate": "Taxa de Sucesso",
+      "last14Days": "Últimos 14 dias"
+    },
+    "recentActivity": "Atividade Recente",
+    "recentTasks": "Tarefas Recentes",
+    "noTasks": "Nenhuma tarefa ainda."
+  },
+  "roles": {
+    "ceo": "CEO",
+    "cto": "CTO",
+    "cmo": "CMO",
+    "cfo": "CFO",
+    "security": "Segurança",
+    "engineer": "Engenheiro",
+    "designer": "Designer",
+    "pm": "PM",
+    "qa": "QA",
+    "devops": "DevOps",
+    "researcher": "Pesquisador",
+    "general": "Geral"
+  },
+  "pages": {
+    "issues": {
+      "title": "Chamados",
+      "selectCompany": "Selecione uma empresa para visualizar os chamados."
+    },
+    "approvals": {
+      "title": "Aprovações",
+      "failedToApprove": "Falha ao aprovar",
+      "failedToReject": "Falha ao rejeitar",
+      "selectCompanyFirst": "Selecione uma empresa primeiro.",
+      "pending": "Pendentes",
+      "all": "Todas",
+      "noPendingApprovals": "Nenhuma aprovação pendente.",
+      "noApprovalsYet": "Nenhuma aprovação ainda."
+    },
+    "costs": {
+      "title": "Custos",
+      "selectCompanyToViewCosts": "Selecione uma empresa para visualizar os custos.",
+      "description": "Gasto com inferência, taxas de plataforma, créditos e janelas de cota ao vivo.",
+      "inferenceSpend": "Gasto com inferência",
+      "tokensAcrossRequestScopedEvents": "{{count}} tokens em eventos de escopo de solicitação",
+      "budget": "Orçamento",
+      "open": "Aberto",
+      "agentsPaused": "{{count}} agentes pausados",
+      "projectsPaused": "{{count}} projetos pausados",
+      "of": "de",
+      "noMonthlyCapConfigured": "Nenhum limite mensal configurado",
+      "financeNet": "Líquido financeiro",
+      "debits": "débitos",
+      "credits": "créditos",
+      "financeEvents": "Eventos financeiros",
+      "estimatedInRange": "estimado no intervalo",
+      "to": "até",
+      "overview": "Visão Geral",
+      "budgets": "Orçamentos",
+      "providers": "Provedores",
+      "billers": "Faturamento",
+      "finance": "Financeiro",
+      "selectStartEndDateToLoadData": "Selecione uma data de início e fim para carregar os dados.",
+      "financeLedger": "Livro razão financeiro",
+      "financeLedgerDescription": "Cobranças em nível de conta que não mapeiam para uma única solicitação de inferência.",
+      "debitsLabel": "Débitos",
+      "totalEventInRange": "evento total no intervalo",
+      "totalEventsInRange": "eventos totais no intervalo",
+      "creditsLabel": "Créditos",
+      "creditsDescription": "Reembolsos, compensações e retornos de crédito",
+      "netLabel": "Líquido",
+      "netDescription": "Débito menos crédito para o período selecionado",
+      "estimatedLabel": "Estimado",
+      "estimatedDescription": "Débitos estimados que ainda não são definitivos em faturas",
+      "inferenceLedgerDescription": "Gasto com inferência de escopo de solicitação para o período selecionado.",
+      "unlimitedBudget": "Orçamento ilimitado",
+      "usageLabel": "uso",
+      "monthlyBudgetConsumed": "{{percent}}% do orçamento mensal consumido neste intervalo.",
+      "byAgent": "Por agente",
+      "byAgentDescription": "O que cada agente consumiu no período selecionado.",
+      "noCostEventsYet": "Nenhum evento de custo ainda.",
+      "in": "entrada",
+      "out": "saída",
+      "api": "api",
+      "subscription": "assinatura",
+      "tok": "tok",
+      "byProject": "Por projeto",
+      "byProjectDescription": "Custos de execução atribuídos através de chamados vinculados a projetos.",
+      "noProjectAttributedRunCostsYet": "Nenhum custo de execução atribuído a projeto ainda.",
+      "unattributed": "Não atribuído",
+      "noFinanceEventsYetLong": "Nenhum evento financeiro ainda. Adicione cobranças em nível de conta assim que as faturas ou créditos do faturamento chegarem.",
+      "budgetControlPlane": "Painel de controle de orçamento",
+      "budgetControlPlaneDescription": "Limites de gastos rígidos para agentes e projetos. A cota de assinatura do provedor permanece separada e aparece em Provedores.",
+      "activeIncidents": "Incidentes ativos",
+      "activeIncidentsDescription": "Cruzamentos de limites suaves ou rígidos abertos",
+      "pendingApprovals": "Aprovações pendentes",
+      "pendingApprovalsDescription": "Aprovações de superação de orçamento aguardando ação da diretoria",
+      "pausedAgents": "Agentes pausados",
+      "pausedAgentsDescription": "Batimentos cardíacos de agentes bloqueados por orçamento",
+      "pausedProjects": "Projetos pausados",
+      "pausedProjectsDescription": "Execução de projetos bloqueada por orçamento",
+      "activeIncidentsSection": "Incidentes ativos",
+      "activeIncidentsSectionDescription": "Resolva paradas rígidas aqui aumentando o orçamento ou mantendo explicitamente o escopo pausado.",
+      "companyBudgets": "Orçamentos da empresa",
+      "agentBudgets": "Orçamentos de agentes",
+      "projectBudgets": "Orçamentos de projetos",
+      "companyBudgetDescription": "Política mensal para toda a empresa.",
+      "agentBudgetDescription": "Políticas de gastos mensais recorrentes para agentes individuais.",
+      "projectBudgetDescription": "Políticas de gastos vitalícios para projetos limitados à execução.",
+      "noBudgetPoliciesYet": "Nenhuma política de orçamento ainda. Defina orçamentos de agentes e projetos a partir de suas páginas de detalhes, ou use o controle de orçamento mensal da empresa existente.",
+      "allProviders": "Todos os provedores",
+      "noCostEventsInThisPeriod": "Nenhum evento de custo neste período.",
+      "byBiller": "Por faturamento",
+      "byBillerDescription": "Eventos financeiros em nível de conta agrupados por quem os cobrou ou creditou.",
+      "noBillableEventsInThisPeriod": "Nenhum evento faturável neste período.",
+      "allBillers": "Todos os faturadores",
+      "noFinanceEventsYet": "Nenhum evento financeiro ainda.",
+      "presets": {
+        "mtd": "Mês até agora",
+        "7d": "Últimos 7 dias",
+        "30d": "Últimos 30 dias",
+        "ytd": "Ano até agora",
+        "all": "Todo o período",
+        "custom": "Personalizado"
+      }
+    },
+    "profileSettings": {
+      "title": "Perfil",
+      "description": "Controle como sua conta aparece na barra lateral e em outras superfícies do painel.",
+      "breadcrumbs": {
+        "instanceSettings": "Configurações da Instância"
+      },
+      "loading": "Carregando perfil...",
+      "loadError": "Falha ao carregar o perfil.",
+      "updateError": "Falha ao atualizar o perfil.",
+      "uploadAvatarError": "Selecione uma empresa antes de enviar um avatar de perfil.",
+      "uploadError": "Falha ao enviar o avatar.",
+      "removeAvatarError": "Falha ao remover o avatar.",
+      "uploadHint": {
+        "stored": "Armazenado no armazenamento de arquivos do Paperclip para {{name}}.",
+        "select": "Selecione uma empresa para enviar um avatar para o armazenamento do Paperclip."
+      },
+      "changePhoto": "Alterar foto",
+      "uploadPhoto": "Enviar foto",
+      "remove": "Remover",
+      "avatarClickHint": "Clique no avatar para enviar uma nova imagem. {{hint}}",
+      "noEmail": "Sem e-mail",
+      "displayName": {
+        "label": "Nome de exibição",
+        "hint": "Exibido no rodapé da conta na barra lateral e nas superfícies de autor de comentário."
+      },
+      "email": {
+        "label": "E-mail",
+        "hint": "O e-mail é gerenciado pela sua sessão de autenticação e é somente leitura aqui."
+      },
+      "saveProfile": "Salvar perfil",
+      "saving": "Salvando...",
+      "defaultName": "Board"
+    },
+    "instanceSettings": {
+      "title": "Batimentos do Agendador (Heartbeats)",
+      "description": "Agentes com um batimento de temporizador ativado em todas as suas empresas.",
+      "breadcrumbs": {
+        "instanceSettings": "Configurações da Instância",
+        "heartbeats": "Batimentos"
+      },
+      "loading": "Carregando batimentos do agendador...",
+      "loadError": "Falha ao carregar batimentos do agendador.",
+      "updateError": "Falha ao atualizar batimento.",
+      "disableAllError": "Falha ao desativar todos os batimentos.",
+      "disableTimerError": {
+        "one": "Falha ao desativar 1 batimento de temporizador: {{detail}}",
+        "other": "Falha ao desativar {{count}} de {{total}} batimentos de temporizador. Primeiro erro: {{detail}}"
+      },
+      "stats": {
+        "active": "ativo",
+        "disabled": "desativado",
+        "company_one": "empresa",
+        "company_other": "empresas"
+      },
+      "disableAll": "Desativar Todos",
+      "disabling": "Desativando...",
+      "confirmDisableAll": "Desativar batimentos de temporizador para todos os {{count}} {{noun}} ativados?",
+      "agent_one": "agente",
+      "agent_other": "agentes",
+      "emptyState": "Nenhum batimento do agendador corresponde aos critérios atuais.",
+      "status": {
+        "on": "Ligado",
+        "off": "Desligado"
+      },
+      "lastHeartbeat": {
+        "never": "nunca"
+      },
+      "fullConfig": "Configuração completa do agente",
+      "disableTimer": "Desativar Batimento do Temporizador",
+      "enableTimer": "Ativar Batimento do Temporizador"
+    },
+    "companySettings": {
+      "title": "Configurações da Empresa",
+      "noCompanySelected": "Nenhuma empresa selecionada. Selecione uma empresa no seletor acima.",
+      "sections": {
+        "general": "Geral",
+        "appearance": "Aparência",
+        "hiring": "Contratação",
+        "packages": "Pacotes da Empresa",
+        "dangerZone": "Zona de Perigo"
+      },
+      "general": {
+        "name": {
+          "label": "Nome da empresa",
+          "hint": "O nome de exibição da sua empresa."
+        },
+        "description": {
+          "label": "Descrição",
+          "hint": "Descrição opcional exibida no perfil da empresa.",
+          "placeholder": "Descrição opcional da empresa"
+        }
+      },
+      "appearance": {
+        "logo": {
+          "label": "Logotipo",
+          "hint": "Envie uma imagem de logotipo em PNG, JPEG, WEBP, GIF ou SVG.",
+          "remove": "Remover logotipo",
+          "removing": "Removendo...",
+          "uploadFailed": "Falha no envio do logotipo",
+          "uploading": "Enviando logotipo..."
+        },
+        "brandColor": {
+          "label": "Cor da marca",
+          "hint": "Define a matiz do ícone da empresa. Deixe vazio para cor gerada automaticamente.",
+          "clear": "Limpar",
+          "placeholder": "Automático"
+        },
+        "attachmentLimit": {
+          "label": "Limite de tamanho de anexo",
+          "hint": "Intervalo aceito: 1-{{max}} MiB.",
+          "error": "Insira um número inteiro de 1 a {{max}}."
+        }
+      },
+      "save": {
+        "changes": "Salvar alterações",
+        "saving": "Salvando...",
+        "saved": "Salvo",
+        "failed": "Falha ao salvar"
+      },
+      "hiring": {
+        "approval": {
+          "label": "Exigir aprovação da diretoria para novas contratações",
+          "hint": "Novas contratações de agentes permanecem pendentes até serem aprovadas pela diretoria."
+        }
+      },
+      "packages": {
+        "description": "Importação e exportação foram movidas para páginas dedicadas acessíveis no cabeçalho do <1>Organograma</1>.",
+        "sendToCloud": "Enviar para o Paperclip Cloud",
+        "export": "Exportar",
+        "import": "Importar"
+      },
+      "dangerZone": {
+        "archive": {
+          "description": "Arquive esta empresa para ocultá-la da barra lateral. Isso persiste no banco de dados.",
+          "button": "Arquivar empresa",
+          "archiving": "Arquivando...",
+          "alreadyArchived": "Já arquivada",
+          "confirm": "Arquivar a empresa \"{{name}}\"? Ela será ocultada da barra lateral.",
+          "failed": "Falha ao arquivar a empresa"
+        }
+      }
+    },
+    "projects": {
+      "title": "Projetos",
+      "selectCompany": "Selecione uma empresa para visualizar os projetos.",
+      "noProjects": "Nenhum projeto ainda.",
+      "addProject": "Adicionar Projeto",
+      "myProjects": "Meus Projetos",
+      "otherProjects": "Outros Projetos",
+      "projectCount_one": "{{count}} projeto",
+      "projectCount_other": "{{count}} projetos",
+      "sort": {
+        "label": "Ordenar",
+        "value": "Ordem: {{label}}",
+        "asc": "Crescente",
+        "desc": "Decrescente",
+        "name": "Nome",
+        "updated": "Atualizado",
+        "created": "Criado",
+        "targetDate": "Data alvo"
+      }
+    },
+    "agents": {
+      "title": "Agentes",
+      "selectCompany": "Selecione uma empresa para visualizar os agentes.",
+      "newAgent": "Novo Agente",
+      "agentCount_one": "{{count}} agente",
+      "agentCount_other": "{{count}} agentes",
+      "noAgents": "Crie seu primeiro agente para começar.",
+      "noMatches": "Nenhum agente corresponde ao filtro selecionado.",
+      "noOrg": "Nenhuma hierarquia organizacional definida.",
+      "live": "Ao vivo",
+      "live_withCount": "Ao vivo ({{count}})",
+      "tabs": {
+        "all": "Todos",
+        "active": "Ativos",
+        "paused": "Pausados",
+        "error": "Erro"
+      },
+      "filters": {
+        "label": "Filtros",
+        "showTerminated": "Mostrar terminados"
+      }
+    }
   }
 }
