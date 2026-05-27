@@ -66,4 +66,16 @@ describe("issue-reference", () => {
     expect(parseIssueReferenceFromHref("/issues/:id")).toBeNull();
     expect(parseIssueReferenceFromHref("http://localhost:3100/api/issues/:id")).toBeNull();
   });
+
+  it("ignores template placeholder issue paths", () => {
+    expect(parseIssuePathIdFromPath("/issues/{issueId}")).toBeNull();
+    expect(parseIssuePathIdFromPath("/issues/<issue-identifier>")).toBeNull();
+    expect(parseIssuePathIdFromPath("/issues/PAP-224)")).toBeNull();
+    expect(parseIssueReferenceFromHref("/issues/{issueId}")).toBeNull();
+    expect(parseIssueReferenceFromHref("/issues/<issue-identifier>")).toBeNull();
+    expect(parseIssueReferenceFromHref("/issues/<issue-identifier>#comment-<comment-id>")).toBeNull();
+    expect(parseIssueReferenceFromHref("issue://{issueId}")).toBeNull();
+    expect(parseIssueReferenceFromHref("issue://<issue-identifier>")).toBeNull();
+    expect(parseIssueReferenceFromHref("/issues/PAP-224)")).toBeNull();
+  });
 });
