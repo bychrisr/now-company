@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { Link, useNavigate, useLocation } from "@/lib/router";
 import { useQuery } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import { agentsApi, type OrgNode } from "../api/agents";
 import { heartbeatsApi } from "../api/heartbeats";
 import { useCompany } from "../context/CompanyContext";
@@ -67,12 +68,13 @@ function filterOrgTree(nodes: OrgNode[], tab: FilterTab, showTerminated: boolean
 }
 
 export function Agents() {
+  const { t } = useTranslation();
   const { selectedCompanyId } = useCompany();
   const { openNewAgent } = useDialogActions();
   const { setBreadcrumbs } = useBreadcrumbs();
   const navigate = useNavigate();
   const location = useLocation();
-  const { isMobile } = useSidebar();
+  const { sidebarOpen, isMobile } = useSidebar();
   const pathSegment = location.pathname.split("/").pop() ?? "all";
   const tab: FilterTab = (pathSegment === "all" || pathSegment === "active" || pathSegment === "paused" || pathSegment === "error") ? pathSegment : "all";
   const [view, setView] = useState<"list" | "org">("org");
@@ -124,11 +126,11 @@ export function Agents() {
   }, [agents]);
 
   useEffect(() => {
-    setBreadcrumbs([{ label: "Agents" }]);
-  }, [setBreadcrumbs]);
+    setBreadcrumbs([{ label: t("pages.agents.title") }]);
+  }, [setBreadcrumbs, t]);
 
   if (!selectedCompanyId) {
-    return <EmptyState icon={Bot} message="Select a company to view agents." />;
+    return <EmptyState icon={Bot} message={t("pages.agents.selectCompany")} />;
   }
 
   if (isLoading) {
@@ -144,10 +146,10 @@ export function Agents() {
         <Tabs value={tab} onValueChange={(v) => navigate(`/agents/${v}`)}>
           <PageTabBar
             items={[
-              { value: "all", label: "All" },
-              { value: "active", label: "Active" },
-              { value: "paused", label: "Paused" },
-              { value: "error", label: "Error" },
+              { value: "all", label: t("pages.agents.tabs.all") },
+              { value: "active", label: t("pages.agents.tabs.active") },
+              { value: "paused", label: t("pages.agents.tabs.paused") },
+              { value: "error", label: t("pages.agents.tabs.error") },
             ]}
             value={tab}
             onValueChange={(v) => navigate(`/agents/${v}`)}
@@ -164,7 +166,7 @@ export function Agents() {
               onClick={() => setFiltersOpen(!filtersOpen)}
             >
               <SlidersHorizontal className="h-3 w-3" />
-              Filters
+              {t("pages.agents.filters.label")}
               {showTerminated && <span className="ml-0.5 px-1 bg-foreground/10 rounded text-[10px]">1</span>}
             </button>
             {filtersOpen && (
@@ -179,7 +181,7 @@ export function Agents() {
                   )}>
                     {showTerminated && <span className="text-background text-[10px] leading-none">&#10003;</span>}
                   </span>
-                  Show terminated
+                  {t("pages.agents.filters.showTerminated")}
                 </button>
               </div>
             )}
@@ -209,13 +211,13 @@ export function Agents() {
           )}
           <Button size="sm" variant="outline" onClick={openNewAgent}>
             <Plus className="h-3.5 w-3.5 mr-1.5" />
-            New Agent
+            {t("pages.agents.newAgent")}
           </Button>
         </div>
       </div>
 
       {filtered.length > 0 && (
-        <p className="text-xs text-muted-foreground">{filtered.length} agent{filtered.length !== 1 ? "s" : ""}</p>
+        <p className="text-xs text-muted-foreground">{t("pages.agents.agentCount", { count: filtered.length })}</p>
       )}
 
       {error && <p className="text-sm text-destructive">{error.message}</p>}
@@ -223,8 +225,8 @@ export function Agents() {
       {agents && agents.length === 0 && (
         <EmptyState
           icon={Bot}
-          message="Create your first agent to get started."
-          action="New Agent"
+          message={t("pages.agents.noAgents")}
+          action={t("pages.agents.newAgent")}
           onAction={openNewAgent}
         />
       )}
@@ -326,7 +328,7 @@ export function Agents() {
 
       {effectiveView === "list" && agents && agents.length > 0 && filtered.length === 0 && (
         <p className="text-sm text-muted-foreground text-center py-8">
-          No agents match the selected filter.
+          {t("pages.agents.noMatches")}
         </p>
       )}
 
@@ -350,13 +352,13 @@ export function Agents() {
 
       {effectiveView === "org" && orgTree && orgTree.length > 0 && filteredOrg.length === 0 && (
         <p className="text-sm text-muted-foreground text-center py-8">
-          No agents match the selected filter.
+          {t("pages.agents.noMatches")}
         </p>
       )}
 
       {effectiveView === "org" && orgTree && orgTree.length === 0 && (
         <p className="text-sm text-muted-foreground text-center py-8">
-          No organizational hierarchy defined.
+          {t("pages.agents.noOrg")}
         </p>
       )}
     </div>
@@ -380,6 +382,7 @@ function OrgTreeNode({
   memberships: ReturnType<typeof useResourceMemberships>["data"];
   membershipMutation: ReturnType<typeof useResourceMembershipMutation>;
 }) {
+  const { t } = useTranslation();
   const agent = agentMap.get(node.id);
   const membershipState = resourceMembershipState(memberships, "agent", node.id);
   const pending = membershipMutation.isPending &&
@@ -404,7 +407,7 @@ function OrgTreeNode({
         <div className="flex-1 min-w-0">
           <span className="text-sm font-medium">{node.name}</span>
           <span className="text-xs text-muted-foreground ml-2">
-            {roleLabels[node.role] ?? node.role}
+            {t(`roles.${node.role}`, { defaultValue: roleLabels[node.role] ?? node.role })}
             {agent?.title ? ` - ${agent.title}` : ""}
           </span>
         </div>
@@ -497,6 +500,7 @@ function LiveRunIndicator({
   runId: string;
   liveCount: number;
 }) {
+  const { t } = useTranslation();
   return (
     <Link
       to={`/agents/${agentRef}/runs/${runId}`}
@@ -508,8 +512,9 @@ function LiveRunIndicator({
         <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500" />
       </span>
       <span className="text-[11px] font-medium text-blue-600 dark:text-blue-400">
-        Live{liveCount > 1 ? ` (${liveCount})` : ""}
+        {liveCount > 1 ? t("pages.agents.live_withCount", { count: liveCount }) : t("pages.agents.live")}
       </span>
     </Link>
   );
 }
+

@@ -5,5 +5,361 @@
       "description": "کمپنی بنا کر شروع کریں۔",
       "newCompany": "نئی کمپنی"
     }
+  },
+  "sidebar": {
+    "newIssue": "New Issue",
+    "dashboard": "Dashboard",
+    "inbox": "Inbox",
+    "work": "Work",
+    "issues": "Issues",
+    "routines": "Routines",
+    "goals": "Goals",
+    "workspaces": "Workspaces",
+    "company": "Company",
+    "org": "Org",
+    "skills": "Skills",
+    "costs": "Costs",
+    "activity": "Activity",
+    "settings": "Settings"
+  },
+  "dashboard": {
+    "emptyState": {
+      "welcome": "Welcome to Paperclip. Set up your first company and agent to get started.",
+      "action": "Get Started",
+      "noCompany": "Create or select a company to view the dashboard."
+    },
+    "noAgents": {
+      "title": "You have no agents.",
+      "action": "Create one here"
+    },
+    "budgetIncident": {
+      "title_one": "{{count}} active budget incident",
+      "title_other": "{{count}} active budget incidents",
+      "subtitle": "{{pausedAgents}} agents paused · {{pausedProjects}} projects paused · {{pendingApprovals}} pending budget approvals",
+      "action": "Open budgets"
+    },
+    "metrics": {
+      "agentsEnabled": "Agents Enabled",
+      "agentsDescription": "{{running}} running, {{paused}} paused, {{error}} errors",
+      "tasksInProgress": "Tasks In Progress",
+      "tasksDescription": "{{open}} open, {{blocked}} blocked",
+      "monthSpend": "Month Spend",
+      "monthSpendDescription": "{{percent}}% of {{budget}} budget",
+      "unlimitedBudget": "Unlimited budget",
+      "pendingApprovals": "Pending Approvals",
+      "budgetOverrides": "{{count}} budget overrides awaiting board review",
+      "awaitingReview": "Awaiting board review"
+    },
+    "charts": {
+      "runActivity": "Run Activity",
+      "issuesByPriority": "Issues by Priority",
+      "issuesByStatus": "Issues by Status",
+      "successRate": "Success Rate",
+      "last14Days": "Last 14 days"
+    },
+    "recentActivity": "Recent Activity",
+    "recentTasks": "Recent Tasks",
+    "noTasks": "No tasks yet."
+  },
+  "roles": {
+    "ceo": "CEO",
+    "cto": "CTO",
+    "cmo": "CMO",
+    "cfo": "CFO",
+    "security": "Security",
+    "engineer": "Engineer",
+    "designer": "Designer",
+    "pm": "PM",
+    "qa": "QA",
+    "devops": "DevOps",
+    "researcher": "Researcher",
+    "general": "General"
+  },
+  "pages": {
+    "issues": {
+      "title": "Issues",
+      "selectCompany": "Select a company to view issues."
+    },
+    "projects": {
+      "title": "Projects",
+      "selectCompany": "Select a company to view projects.",
+      "noProjects": "No projects yet.",
+      "addProject": "Add Project",
+      "myProjects": "My Projects",
+      "otherProjects": "Other Projects",
+      "projectCount_one": "{{count}} project",
+      "projectCount_other": "{{count}} projects",
+      "sort": {
+        "label": "Sort",
+        "value": "Sort: {{label}}",
+        "asc": "Asc",
+        "desc": "Desc",
+        "name": "Name",
+        "updated": "Updated",
+        "created": "Created",
+        "targetDate": "Target date"
+      }
+    },
+    "agents": {
+      "title": "Agents",
+      "selectCompany": "Select a company to view agents.",
+      "newAgent": "New Agent",
+      "agentCount_one": "{{count}} agent",
+      "agentCount_other": "{{count}} agents",
+      "noAgents": "Create your first agent to get started.",
+      "noMatches": "No agents match the selected filter.",
+      "noOrg": "No organizational hierarchy defined.",
+      "live": "Live",
+      "live_withCount": "Live ({{count}})",
+      "tabs": {
+        "all": "All",
+        "active": "Active",
+        "paused": "Paused",
+        "error": "Error"
+      },
+      "filters": {
+        "label": "Filters",
+        "showTerminated": "Show terminated"
+      }
+    },
+    "approvals": {
+      "title": "Approvals",
+      "failedToApprove": "Failed to approve",
+      "failedToReject": "Failed to reject",
+      "selectCompanyFirst": "Select a company first.",
+      "pending": "Pending",
+      "all": "All",
+      "noPendingApprovals": "No pending approvals.",
+      "noApprovalsYet": "No approvals yet."
+    },
+    "costs": {
+      "title": "Costs",
+      "selectCompanyToViewCosts": "Select a company to view costs.",
+      "description": "Inference spend, platform fees, credits, and live quota windows.",
+      "inferenceSpend": "Inference spend",
+      "tokensAcrossRequestScopedEvents": "{{count}} tokens across request-scoped events",
+      "budget": "Budget",
+      "open": "Open",
+      "agentsPaused": "{{count}} agents paused",
+      "projectsPaused": "{{count}} projects paused",
+      "of": "of",
+      "noMonthlyCapConfigured": "No monthly cap configured",
+      "financeNet": "Finance net",
+      "debits": "debits",
+      "credits": "credits",
+      "financeEvents": "Finance events",
+      "estimatedInRange": "estimated in range",
+      "to": "to",
+      "overview": "Overview",
+      "budgets": "Budgets",
+      "providers": "Providers",
+      "billers": "Billers",
+      "finance": "Finance",
+      "selectStartEndDateToLoadData": "Select a start and end date to load data.",
+      "financeLedger": "Finance ledger",
+      "financeLedgerDescription": "Account-level charges that do not map to a single inference request.",
+      "debitsLabel": "Debits",
+      "totalEventInRange": "total event in range",
+      "totalEventsInRange": "total events in range",
+      "creditsLabel": "Credits",
+      "creditsDescription": "Refunds, offsets, and credit returns",
+      "netLabel": "Net",
+      "netDescription": "Debit minus credit for the selected period",
+      "estimatedLabel": "Estimated",
+      "estimatedDescription": "Estimated debits that are not yet invoice-authoritative",
+      "inferenceLedgerDescription": "Request-scoped inference spend for the selected period.",
+      "unlimitedBudget": "Unlimited budget",
+      "usageLabel": "usage",
+      "monthlyBudgetConsumed": "{{percent}}% of monthly budget consumed in this range.",
+      "byAgent": "By agent",
+      "byAgentDescription": "What each agent consumed in the selected period.",
+      "noCostEventsYet": "No cost events yet.",
+      "in": "in",
+      "out": "out",
+      "api": "api",
+      "subscription": "subscription",
+      "tok": "tok",
+      "byProject": "By project",
+      "byProjectDescription": "Run costs attributed through project-linked issues.",
+      "noProjectAttributedRunCostsYet": "No project-attributed run costs yet.",
+      "unattributed": "Unattributed",
+      "noFinanceEventsYetLong": "No finance events yet. Add account-level charges once biller invoices or credits land.",
+      "budgetControlPlane": "Budget control plane",
+      "budgetControlPlaneDescription": "Hard-stop spend limits for agents and projects. Provider subscription quota stays separate and appears under Providers.",
+      "activeIncidents": "Active incidents",
+      "activeIncidentsDescription": "Open soft or hard threshold crossings",
+      "pendingApprovals": "Pending approvals",
+      "pendingApprovalsDescription": "Budget override approvals awaiting board action",
+      "pausedAgents": "Paused agents",
+      "pausedAgentsDescription": "Agent heartbeats blocked by budget",
+      "pausedProjects": "Paused projects",
+      "pausedProjectsDescription": "Project execution blocked by budget",
+      "activeIncidentsSection": "Active incidents",
+      "activeIncidentsSectionDescription": "Resolve hard stops here by raising the budget or explicitly keeping the scope paused.",
+      "companyBudgets": "Company budgets",
+      "agentBudgets": "Agent budgets",
+      "projectBudgets": "Project budgets",
+      "companyBudgetDescription": "Company-wide monthly policy.",
+      "agentBudgetDescription": "Recurring monthly spend policies for individual agents.",
+      "projectBudgetDescription": "Lifetime spend policies for execution-bound projects.",
+      "noBudgetPoliciesYet": "No budget policies yet. Set agent and project budgets from their detail pages, or use the existing company monthly budget control.",
+      "allProviders": "All providers",
+      "noCostEventsInThisPeriod": "No cost events in this period.",
+      "byBiller": "By biller",
+      "byBillerDescription": "Account-level financial events grouped by who charged or credited them.",
+      "noBillableEventsInThisPeriod": "No billable events in this period.",
+      "allBillers": "All billers",
+      "noFinanceEventsYet": "No finance events yet.",
+      "presets": {
+        "mtd": "Month to Date",
+        "7d": "Last 7 Days",
+        "30d": "Last 30 Days",
+        "ytd": "Year to Date",
+        "all": "All Time",
+        "custom": "Custom"
+      }
+    },
+    "profileSettings": {
+      "title": "Profile",
+      "description": "Control how your account appears in the sidebar and other board surfaces.",
+      "breadcrumbs": {
+        "instanceSettings": "Instance Settings"
+      },
+      "loading": "Loading profile...",
+      "loadError": "Failed to load profile.",
+      "updateError": "Failed to update profile.",
+      "uploadAvatarError": "Select a company before uploading a profile avatar.",
+      "uploadError": "Failed to upload avatar.",
+      "removeAvatarError": "Failed to remove avatar.",
+      "uploadHint": {
+        "stored": "Stored in Paperclip file storage for {{name}}.",
+        "select": "Select a company to upload an avatar into Paperclip storage."
+      },
+      "changePhoto": "Change photo",
+      "uploadPhoto": "Upload photo",
+      "remove": "Remove",
+      "avatarClickHint": "Click the avatar to upload a new image. {{hint}}",
+      "noEmail": "No email",
+      "displayName": {
+        "label": "Display name",
+        "hint": "Shown in the sidebar account footer and comment author surfaces."
+      },
+      "email": {
+        "label": "Email",
+        "hint": "Email is managed by your auth session and is read-only here."
+      },
+      "saveProfile": "Save profile",
+      "saving": "Saving...",
+      "defaultName": "Board"
+    },
+    "instanceSettings": {
+      "title": "Scheduler Heartbeats",
+      "description": "Agents with a timer heartbeat enabled across all of your companies.",
+      "breadcrumbs": {
+        "instanceSettings": "Instance Settings",
+        "heartbeats": "Heartbeats"
+      },
+      "loading": "Loading scheduler heartbeats...",
+      "loadError": "Failed to load scheduler heartbeats.",
+      "updateError": "Failed to update heartbeat.",
+      "disableAllError": "Failed to disable all heartbeats.",
+      "disableTimerError": {
+        "one": "Failed to disable 1 timer heartbeat: {{detail}}",
+        "other": "Failed to disable {{count}} of {{total}} timer heartbeats. First error: {{detail}}"
+      },
+      "stats": {
+        "active": "active",
+        "disabled": "disabled",
+        "company_one": "company",
+        "company_other": "companies"
+      },
+      "disableAll": "Disable All",
+      "disabling": "Disabling...",
+      "confirmDisableAll": "Disable timer heartbeats for all {{count}} enabled {{noun}}?",
+      "agent_one": "agent",
+      "agent_other": "agents",
+      "emptyState": "No scheduler heartbeats match the current criteria.",
+      "status": {
+        "on": "On",
+        "off": "Off"
+      },
+      "lastHeartbeat": {
+        "never": "never"
+      },
+      "fullConfig": "Full agent config",
+      "disableTimer": "Disable Timer Heartbeat",
+      "enableTimer": "Enable Timer Heartbeat"
+    },
+    "companySettings": {
+      "title": "Company Settings",
+      "noCompanySelected": "No company selected. Select a company from the switcher above.",
+      "sections": {
+        "general": "General",
+        "appearance": "Appearance",
+        "hiring": "Hiring",
+        "packages": "Company Packages",
+        "dangerZone": "Danger Zone"
+      },
+      "general": {
+        "name": {
+          "label": "Company name",
+          "hint": "The display name for your company."
+        },
+        "description": {
+          "label": "Description",
+          "hint": "Optional description shown in the company profile.",
+          "placeholder": "Optional company description"
+        }
+      },
+      "appearance": {
+        "logo": {
+          "label": "Logo",
+          "hint": "Upload a PNG, JPEG, WEBP, GIF, or SVG logo image.",
+          "remove": "Remove logo",
+          "removing": "Removing...",
+          "uploadFailed": "Logo upload failed",
+          "uploading": "Uploading logo..."
+        },
+        "brandColor": {
+          "label": "Brand color",
+          "hint": "Sets the hue for the company icon. Leave empty for auto-generated color.",
+          "clear": "Clear",
+          "placeholder": "Auto"
+        },
+        "attachmentLimit": {
+          "label": "Attachment size limit",
+          "hint": "Accepted range: 1-{{max}} MiB.",
+          "error": "Enter a whole number from 1 to {{max}}."
+        }
+      },
+      "save": {
+        "changes": "Save changes",
+        "saving": "Saving...",
+        "saved": "Saved",
+        "failed": "Failed to save"
+      },
+      "hiring": {
+        "approval": {
+          "label": "Require board approval for new hires",
+          "hint": "New agent hires stay pending until approved by board."
+        }
+      },
+      "packages": {
+        "description": "Import and export have moved to dedicated pages accessible from the <1>Org Chart</1> header.",
+        "sendToCloud": "Send to Paperclip Cloud",
+        "export": "Export",
+        "import": "Import"
+      },
+      "dangerZone": {
+        "archive": {
+          "description": "Archive this company to hide it from the sidebar. This persists in the database.",
+          "button": "Archive company",
+          "archiving": "Archiving...",
+          "alreadyArchived": "Already archived",
+          "confirm": "Archive company \"{{name}}\"? It will be hidden from the sidebar.",
+          "failed": "Failed to archive company"
+        }
+      }
+    }
   }
 }
