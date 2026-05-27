@@ -42,6 +42,7 @@ diagnostics/
 *.tmp
 .vscode/
 .claude/settings.local.json
+CLAUDE.local.md
 .paperclip-local/
 /.idea/
 /.agents/

@@ -71,27 +71,28 @@ When an agent is active:
 - Maintain the agent's perspective throughout the interaction
 <!-- AIOX-MANAGED-END: agent-system -->
 
-## Development Methodology
+## Metodologia de Desenvolvimento
 
-### Story-Driven Development
-1. **Work from stories** - All development starts with a story in `docs/stories/`
-2. **Update progress** - Mark checkboxes as tasks complete: [ ] → [x]
-3. **Track changes** - Maintain the File List section in the story
-4. **Follow criteria** - Implement exactly what the acceptance criteria specify
+### Story-Driven Development (Desenvolvimento Guiado por Histórias)
+1. **Trabalhe a partir de Stories** - Todo desenvolvimento começa com uma história em `docs/stories/`.
+2. **Atualize o progresso** - Marque os checkboxes conforme as tarefas são concluídas: `[ ]` → `[x]`.
+3. **Monitore alterações** - Mantenha a seção de "File List" atualizada no arquivo da story.
+4. **Respeite os critérios** - Implemente exatamente o que os critérios de aceitação especificam, sem inventar features.
 
-### Code Standards
-- Write clean, self-documenting code
-- Follow existing patterns in the codebase
-- Include comprehensive error handling
-- Add unit tests for all new functionality
-- Use TypeScript/JavaScript best practices
+### Padrões de Código
+- Escreva código limpo, legível e auto-documentado.
+- Siga os padrões arquiteturais existentes na base de código do Paperclip.
+- Inclua tratamento de erro robusto (nunca deixe blocos catch vazios).
+- Adicione testes unitários/funcionais para novas implementações.
+- Use TypeScript estrito (evitar `any` sem justificativa forte, preferir `unknown` + type guards).
+- Linguagem dos comentários: PT-BR (explicando sempre o **porquê**, não apenas o que o código faz).
 
-### Testing Requirements
-- Run all tests before marking tasks complete
-- Ensure linting passes: `npm run lint`
-- Verify type checking: `npm run typecheck`
-- Add tests for new features
-- Test edge cases and error scenarios
+### Requisitos de Teste e Validação
+- Sempre execute os testes antes de considerar uma tarefa como concluída.
+- Comando de verificação de tokens: `pnpm run check:tokens`
+- Comando de type checking: `pnpm run typecheck`
+- Comando de execução de testes: `pnpm run test`
+- Sempre verifique se o build passa limpo: `pnpm run build`
 
 <!-- AIOX-MANAGED-START: framework-structure -->
 ## AIOX Framework Structure
@@ -190,58 +191,50 @@ aiox graph --stats                       # Entity stats e cache metrics
 > **Referência:** `.aiox-core/core/graph-dashboard/` — CLI, renderers, data sources
 <!-- AIOX-MANAGED-END: graph-dashboard -->
 
-## Workflow Execution
+## Execução de Workflows e Boas Práticas
 
-### Task Execution Pattern
-1. Read the complete task/workflow definition
-2. Understand all elicitation points
-3. Execute steps sequentially
-4. Handle errors gracefully
-5. Provide clear feedback
+### Padrão de Execução de Tarefas
+1. Leia a definição completa da tarefa/workflow antes de começar.
+2. Identifique todos os pontos de eliciação (perguntas ao usuário).
+3. Execute os passos de forma sequencial.
+4. Trate os erros de forma proativa (nunca ignore falhas).
+5. Forneça feedback claro e evidências reais (git diff, testes passing).
 
-### Interactive Workflows
-- Workflows with `elicit: true` require user input
-- Present options clearly
-- Validate user responses
-- Provide helpful defaults
+### Convenções de Git e Integração
+- Branches: `feat/`, `fix/`, `docs/`, `chore/`, `refactor/`, `test/`.
+- Commits: Sempre em inglês (EN), Conventional Commits (ex: `feat(server): add ide detection [Story 2.1]`), curtos (≤72 caracteres), atômicos e focados.
+- Nunca faça `push --force` ou envie secrets para o repositório remoto.
 
-## Best Practices
+---
 
-### When implementing features:
-- Check existing patterns first
-- Reuse components and utilities
-- Follow naming conventions
-- Keep functions focused and testable
-- Document complex logic
+## MCP Pipeline — Uso Proativo
 
-### When working with agents:
-- Respect agent boundaries
-- Use appropriate agent for each task
-- Follow agent communication patterns
-- Maintain agent context
+Sempre use os servidores MCP integrados ANTES de responder com base em memória. O custo de pesquisa é zero; o custo de uma resposta imprecisa é o retrabalho.
 
-### When handling errors:
-```javascript
-try {
-  // Operation
-} catch (error) {
-  console.error(`Error in ${operation}:`, error);
-  // Provide helpful error message
-  throw new Error(`Failed to ${operation}: ${error.message}`);
-}
+### Servidores MCP Disponíveis no Ambiente
+
+| Serviço | Porta / Endpoint | Finalidade Principal | Quando Usar |
+|---|---|---|---|
+| **probe** | `:8200/sse` | Busca semântica AST | Localizar trechos de código, lógica de funções e arquivos relevantes. |
+| **tavily** | `:8300/sse` | Busca na Web | Validar APIs externas, pesquisar erros de runtime e novas specs. |
+| **codebase-memory** | `:8400/sse` | Grafo de dependências | Entender a arquitetura geral do projeto e interdependências. |
+| **memory-wrapper** | `:8599/mcp` | Memória de decisões | Buscar precedentes arquiteturais e salvar decisões da sessão. |
+| **serena** | `:9121/sse` | LSP & Análise estática | Localizar definições de tipos, referências, diagnosticar erros de digitação. |
+| **docker-gateway** | `:8080/sse` | Gateway Docker | Acesso seguro e isolado a ferramentas e execução dentro de containers. |
+
+### Fluxo de Reconhecimento do Projeto
+```
+1. codebase-memory ──> Entender o mapa de dependências e arquitetura de pastas.
+2. probe ───────────> Localizar onde está implementada a lógica específica.
+3. serena ──────────> Analisar os tipos TypeScript, referências cruzadas e assinaturas de funções.
 ```
 
-## Git & GitHub Integration
+### Anti-Padrões
+- ❌ Nunca afirme onde está ou o que faz um arquivo sem ler seu conteúdo ou usar o `probe`.
+- ❌ Nunca chute a solução de um erro de dependência ou runtime sem pesquisar via `tavily` primeiro.
+- ❌ Nunca faça refatorações cegas sem consultar as referências por `serena`.
+- ❌ Nunca esqueça de salvar padrões arquiteturais novos no `memory-wrapper`.
 
-### Commit Conventions
-- Use conventional commits: `feat:`, `fix:`, `docs:`, `chore:`, etc.
-- Reference story ID: `feat: implement IDE detection [Story 2.1]`
-- Keep commits atomic and focused
-
-### GitHub CLI Usage
-- Ensure authenticated: `gh auth status`
-- Use for PR creation: `gh pr create`
-- Check org access: `gh api user/memberships`
 
 <!-- AIOX-MANAGED-START: aiox-patterns -->
 ## AIOX-Specific Patterns
@@ -269,18 +262,18 @@ await story.save();
 ```
 <!-- AIOX-MANAGED-END: aiox-patterns -->
 
-## Environment Setup
+## Configuração do Ambiente
 
-### Required Tools
-- Node.js 18+
+### Ferramentas Requeridas
+- Node.js >=20
 - GitHub CLI
 - Git
-- Your preferred package manager (npm/yarn/pnpm)
+- pnpm (gerenciador de pacotes padrão)
 
-### Configuration Files
-- `.aiox/config.yaml` - Framework configuration
-- `.env` - Environment variables
-- `aiox.config.js` - Project-specific settings
+### Arquivos de Configuração
+- `.aiox/config.yaml` - Configuração do framework AIOX
+- `.env` - Variáveis de ambiente locais
+- `aiox.config.js` - Configurações específicas do projeto
 
 <!-- AIOX-MANAGED-START: common-commands -->
 ## Common Commands
@@ -298,59 +291,42 @@ await story.save();
 - `npm run build` - Build project
 <!-- AIOX-MANAGED-END: common-commands -->
 
-## Debugging
+## Depuração e Logs
 
-### Enable Debug Mode
+### Ativar Modo Debug do AIOX
 ```bash
 export AIOX_DEBUG=true
 ```
 
-### View Agent Logs
+### Visualizar Logs de Agentes
 ```bash
 tail -f .aiox/logs/agent.log
 ```
 
-### Trace Workflow Execution
+### Rastrear Execução de Workflows
 ```bash
-npm run trace -- workflow-name
+pnpm run trace -- workflow-name
 ```
 
-## Claude Code Specific Configuration
+---
 
-### Performance Optimization
-- Prefer batched tool calls when possible for better performance
-- Use parallel execution for independent operations
-- Cache frequently accessed data in memory during sessions
+## Comportamento do Claude Code (Regras Locais)
 
-### Tool Usage Guidelines
-- Always use the Grep tool for searching, never `grep` or `rg` in bash
-- Use the Task tool for complex multi-step operations
-- Batch file reads/writes when processing multiple files
-- Prefer editing existing files over creating new ones
+### 1. Estilo de Resposta e Comunicação
+- **Responda sempre em Português do Brasil (PT-BR)**, exceto para código, commits e comandos (EN).
+- **Sem disclaimers, desculpas ou conversas fiadas.** Seja direto ao ponto.
+- **Máximo 3 opções:** Ao apresentar escolhas ou propor caminhos de solução, restrinja a lista a no máximo 3 opções claras para facilitar a tomada de decisão rápida.
 
-### Session Management
-- Track story progress throughout the session
-- Update checkboxes immediately after completing tasks
-- Maintain context of the current story being worked on
-- Save important state before long-running operations
+### 2. Governança e Segurança (Sem YOLO Mode)
+- **NUNCA execute ações destrutivas ou alterações estruturais complexas autonomamente (sem YOLO).** Sempre valide o plano com o usuário antes de prosseguir.
+- **Git Branch Warning:** Se a branch ativa for `main` ou `master`, alerte o usuário imediatamente antes de fazer alterações de código ou tentar commits locais.
+- **Commits Incrementais:** Realize commits pequenos e focados ao concluir pequenas partes do trabalho (Conventional Commits em EN, ex: `feat(db): update schema`).
 
-### Error Recovery
-- Always provide recovery suggestions for failures
-- Include error context in messages to user
-- Suggest rollback procedures when appropriate
-- Document any manual fixes required
-
-### Testing Strategy
-- Run tests incrementally during development
-- Always verify lint and typecheck before marking complete
-- Test edge cases for each new feature
-- Document test scenarios in story files
-
-### Documentation
-- Update relevant docs when changing functionality
-- Include code examples in documentation
-- Keep README synchronized with actual behavior
-- Document breaking changes prominently
+### 3. Hooks Locais Ativos
+O projeto possui hooks automáticos configurados em `.claude/hooks/` e registrados em `.claude/settings.local.json`:
+- `SessionStart.sh`: Executado no início da sessão para validar a branch Git, o status do grafo de conhecimento (Graphify) e dependências (`node_modules`).
+- `PreCompact.sh`: Executado antes do Claude compactar o histórico de mensagens, salvando o estado atual em `.claude/session_state.json`.
+- `PostToolUse.sh`: Executado após o uso de ferramentas de escrita/edição para fazer auto-commit de arquivos quando ativado via flag `.claude/auto-commit` ou variável `CLAUDE_AUTO_COMMIT=true`.
 
 ---
-*Synkra AIOX Claude Code Configuration v2.0*
+*Synkra AIOX & Paperclip Claude Code Configuration v4.0.0*
