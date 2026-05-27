@@ -320,45 +320,45 @@
       }
     },
     "projects": {
-      "title": "Projects",
-      "selectCompany": "Select a company to view projects.",
-      "noProjects": "No projects yet.",
-      "addProject": "Add Project",
-      "myProjects": "My Projects",
-      "otherProjects": "Other Projects",
-      "projectCount_one": "{{count}} project",
-      "projectCount_other": "{{count}} projects",
+      "title": "Projetos",
+      "selectCompany": "Selecione uma empresa para visualizar os projetos.",
+      "noProjects": "Nenhum projeto ainda.",
+      "addProject": "Adicionar Projeto",
+      "myProjects": "Meus Projetos",
+      "otherProjects": "Outros Projetos",
+      "projectCount_one": "{{count}} projeto",
+      "projectCount_other": "{{count}} projetos",
       "sort": {
-        "label": "Sort",
-        "value": "Sort: {{label}}",
-        "asc": "Asc",
-        "desc": "Desc",
-        "name": "Name",
-        "updated": "Updated",
-        "created": "Created",
-        "targetDate": "Target date"
+        "label": "Ordenar",
+        "value": "Ordem: {{label}}",
+        "asc": "Crescente",
+        "desc": "Decrescente",
+        "name": "Nome",
+        "updated": "Atualizado",
+        "created": "Criado",
+        "targetDate": "Data alvo"
       }
     },
     "agents": {
-      "title": "Agents",
-      "selectCompany": "Select a company to view agents.",
-      "newAgent": "New Agent",
-      "agentCount_one": "{{count}} agent",
-      "agentCount_other": "{{count}} agents",
-      "noAgents": "Create your first agent to get started.",
-      "noMatches": "No agents match the selected filter.",
-      "noOrg": "No organizational hierarchy defined.",
-      "live": "Live",
-      "live_withCount": "Live ({{count}})",
+      "title": "Agentes",
+      "selectCompany": "Selecione uma empresa para visualizar os agentes.",
+      "newAgent": "Novo Agente",
+      "agentCount_one": "{{count}} agente",
+      "agentCount_other": "{{count}} agentes",
+      "noAgents": "Crie seu primeiro agente para começar.",
+      "noMatches": "Nenhum agente corresponde ao filtro selecionado.",
+      "noOrg": "Nenhuma hierarquia organizacional definida.",
+      "live": "Ao vivo",
+      "live_withCount": "Ao vivo ({{count}})",
       "tabs": {
-        "all": "All",
-        "active": "Active",
-        "paused": "Paused",
-        "error": "Error"
+        "all": "Todos",
+        "active": "Ativos",
+        "paused": "Pausados",
+        "error": "Erro"
       },
       "filters": {
-        "label": "Filters",
-        "showTerminated": "Show terminated"
+        "label": "Filtros",
+        "showTerminated": "Mostrar terminados"
       }
     }
   }
