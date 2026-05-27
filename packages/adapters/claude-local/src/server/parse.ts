@@ -73,7 +73,20 @@ export function parseClaudeStreamJson(stdout: string) {
   };
   const costRaw = finalResult.total_cost_usd;
   const costUsd = typeof costRaw === "number" && Number.isFinite(costRaw) ? costRaw : null;
-  const summary = asString(finalResult.result, assistantTexts.join("\n\n")).trim();
+
+  // The `result` field in the "result" event is typically the full assistant text,
+  // but it can contain protocol/hook JSON (e.g. `{"ok":true}`) when a Stop hook
+  // forces the model to reply in JSON. Prefer accumulated assistantTexts when
+  // available; fall back to `result` only when it is a non-empty, non-JSON-object string.
+  const resultText = asString(finalResult.result, "").trim();
+  const resultLooksLikeProtocol =
+    resultText.startsWith("{") || resultText.startsWith("[");
+  const fallbackText = assistantTexts.join("\n\n").trim();
+  const summary = (
+    fallbackText ||
+    (!resultLooksLikeProtocol && resultText) ||
+    resultText
+  ).trim();
 
   return {
     sessionId,
