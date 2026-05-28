@@ -82,6 +82,7 @@ Thumbs.db
 # Graphify — binary outputs (large, regenerable)
 **/graphify-out/graph.json
 **/graphify-out/cache/
+**/graphify-out/.graphify_*
 
 # AIOX/Claude runtime state (ephemeral, not code)
 .aiox/sessions/
