@@ -105,7 +105,7 @@ check_mcp_docker() {
 
 echo ""
 echo "🔌 Status MCPs:"
-check_mcp_tcp "probe"           "127.0.0.1" 8200 "/sse"
+check_mcp_tcp "probe"           "127.0.0.1" 8200 "/mcp"
 check_mcp_tcp "tavily"          "127.0.0.1" 8300 "/mcp"
 check_mcp_tcp "codebase-memory" "127.0.0.1" 8400 "/mcp"
 check_mcp_tcp "memory-wrapper"  "127.0.0.1" 8599 "/mcp"
