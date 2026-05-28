@@ -1,5 +1,45 @@
 [
   {
+    "sessionId": "c29b5795-75e7-4e56-abf4-146595744f35",
+    "timestamp": "2026-05-28T00:40:47.810Z",
+    "provider": "gemini"
+  },
+  {
+    "sessionId": "c29b5795-75e7-4e56-abf4-146595744f35",
+    "timestamp": "2026-05-28T00:40:47.732Z",
+    "provider": "gemini"
+  },
+  {
+    "sessionId": "c29b5795-75e7-4e56-abf4-146595744f35",
+    "timestamp": "2026-05-28T00:40:47.679Z",
+    "provider": "gemini"
+  },
+  {
+    "sessionId": "5627f6e7-eadc-4c01-b456-068afc7fe6b8",
+    "timestamp": "2026-05-27T08:04:53.199Z",
+    "provider": "gemini"
+  },
+  {
+    "sessionId": "8b4c4c65-3715-4dbe-935b-3e6f042555ce",
+    "timestamp": "2026-05-27T07:38:44.717Z",
+    "provider": "gemini"
+  },
+  {
+    "sessionId": "8b4c4c65-3715-4dbe-935b-3e6f042555ce",
+    "timestamp": "2026-05-27T07:38:44.612Z",
+    "provider": "gemini"
+  },
+  {
+    "sessionId": "8b4c4c65-3715-4dbe-935b-3e6f042555ce",
+    "timestamp": "2026-05-27T07:38:44.562Z",
+    "provider": "gemini"
+  },
+  {
+    "sessionId": "7f97f4d7-5e8f-4d8f-89bb-39f19825d0ff",
+    "timestamp": "2026-05-27T05:57:30.086Z",
+    "provider": "gemini"
+  },
+  {
     "sessionId": "117a15c8-dfdb-4afd-998b-ac8e39feec39",
     "timestamp": "2026-05-27T04:45:38.096Z",
     "provider": "gemini"

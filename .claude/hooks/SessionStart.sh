@@ -67,5 +67,50 @@ if git -C "$GIT_ROOT" rev-parse --is-inside-work-tree &>/dev/null; then
   fi
 fi
 
+# ─── 4. Verificação de MCPs Locais ────────────────────────────────────────────
+# Checa serviços MCP locais; nenhum deles expõe /health, então usamos a porta
+# diretamente (TCP) ou o estado do container Docker.
+check_mcp_tcp() {
+  # check_mcp_tcp <name> <host> <port> <path>
+  local name="$1" host="$2" port="$3" path="$4"
+  if curl -s --max-time 2 -o /dev/null -w '%{http_code}' "http://${host}:${port}${path}" 2>/dev/null | grep -qE '^(200|204|400|404|405)$'; then
+    echo "✅ MCP ${name} online (:${port}${path})"
+    return 0
+  fi
+  # Fallback: TCP connect via nc
+  if nc -z "${host}" "${port}" 2>/dev/null; then
+    echo "✅ MCP ${name} online (tcp :${port})"
+    return 0
+  fi
+  echo "⚠️ MCP ${name} offline (:${port})"
+  return 1
+}
+
+check_mcp_docker() {
+  # check_mcp_docker <name> <container>
+  local name="$1" container="$2"
+  if ! command -v docker >/dev/null 2>&1; then
+    echo "⚠️ MCP ${name}: docker indisponível"
+    return 1
+  fi
+  local running
+  running=$(docker inspect "${container}" --format '{{.State.Running}}' 2>/dev/null || echo "false")
+  if [[ "${running}" == "true" ]]; then
+    echo "✅ MCP ${name} online (container ${container} UP)"
+    return 0
+  fi
+  echo "⚠️ MCP ${name} offline (container ${container} not running)"
+  return 1
+}
+
+echo ""
+echo "🔌 Status MCPs:"
+check_mcp_tcp "probe"           "127.0.0.1" 8200 "/sse"
+check_mcp_tcp "tavily"          "127.0.0.1" 8300 "/mcp"
+check_mcp_tcp "codebase-memory" "127.0.0.1" 8400 "/mcp"
+check_mcp_tcp "memory-wrapper"  "127.0.0.1" 8599 "/mcp"
+check_mcp_docker "serena"         "serena"
+check_mcp_docker "docker-gateway" "mcp-gateway"
+
 echo "---"
 exit 0

@@ -215,7 +215,7 @@ Sempre use os servidores MCP integrados ANTES de responder com base em memória.
 
 | Serviço | Porta / Endpoint | Finalidade Principal | Quando Usar |
 |---|---|---|---|
-| **probe** | `:8200/sse` | Busca semântica AST | Localizar trechos de código, lógica de funções e arquivos relevantes. |
+| **probe** | `:8200/mcp` | Busca semântica AST | Localizar trechos de código, lógica de funções e arquivos relevantes. |
 | **tavily** | `:8300/sse` | Busca na Web | Validar APIs externas, pesquisar erros de runtime e novas specs. |
 | **codebase-memory** | `:8400/sse` | Grafo de dependências | Entender a arquitetura geral do projeto e interdependências. |
 | **memory-wrapper** | `:8599/mcp` | Memória de decisões | Buscar precedentes arquiteturais e salvar decisões da sessão. |
