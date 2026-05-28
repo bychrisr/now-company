@@ -78,3 +78,7 @@ Thumbs.db
 # AIOX Local (AIOX)
 .aiox-core/local/
 .aiox/install-log.txt
+
+# Graphify — binary outputs (large, regenerable)
+graphify-out/graph.json
+graphify-out/cache/
