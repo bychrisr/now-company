@@ -285,11 +285,55 @@ await story.save();
 - `*workflow {name}` - Run workflow
 
 ### Development Commands
-- `npm run dev` - Start development
-- `npm test` - Run tests
-- `npm run lint` - Check code style
-- `npm run build` - Build project
+- `pnpm dev` - Start development (replaces `npm run dev`)
+- `pnpm test` - Run tests
+- `pnpm run lint` - Check code style
+- `pnpm run build` - Build project
 <!-- AIOX-MANAGED-END: common-commands -->
+
+## Stack de Desenvolvimento Local
+
+### Como a stack funciona
+
+| Componente | Status | Detalhe |
+|---|---|---|
+| **Backend API** | `pnpm dev` | Porta 3100 — `http://localhost:3100` |
+| **Frontend UI** | Embutido no backend | Servido pelo mesmo servidor em modo middleware (mesma origem, porta 3100) |
+| **PostgreSQL** | Embutido automático | Sem Docker. Inicia sozinho se `DATABASE_URL` não estiver definido. Dados em `~/.paperclip/instances/default/db/` |
+| **Redis** | **Não existe** | Este projeto não usa Redis. Jobs são gerenciados internamente via banco de dados |
+| **Docker** | Opcional | Só necessário para testar imagem de produção (`docker/docker-compose.yml`) |
+
+### Um único comando sobe tudo
+
+```bash
+cd /home/bychrisr/projects/work/now-company && pnpm dev
+```
+
+**Isso inicia:** backend + UI + banco de dados embutido. Sem setup adicional.
+
+### Alias recomendado (`~/.zshrc`)
+
+```bash
+# Paperclip dev — sobe em background, log em ~/.paperclip/dev.log
+alias pc-dev='cd /home/bychrisr/projects/work/now-company && nohup pnpm dev > ~/.paperclip/dev.log 2>&1 & echo "Paperclip subindo... (log: ~/.paperclip/dev.log)"'
+alias pc-stop='cd /home/bychrisr/projects/work/now-company && pnpm dev:stop'
+alias pc-log='tail -f ~/.paperclip/dev.log'
+alias pc-health='curl -s http://localhost:3100/api/health | jq .'
+```
+
+### Por que o servidor "cai"
+
+O `pnpm dev` roda em foreground — se o terminal fechar, o processo morre. Use `pc-dev` (alias acima com `nohup`) para rodar em background e persistir após fechar o terminal.
+
+O dev-runner detecta automaticamente se já está rodando (`findAdoptableLocalService`) e reussa o processo existente — é seguro chamar `pnpm dev` mesmo se já estiver ativo.
+
+### Parar / checar
+
+```bash
+pnpm dev:stop                          # para o servidor
+curl http://localhost:3100/api/health  # health check
+pnpm dev:list                          # lista serviços ativos
+```
 
 ## Depuração e Logs
 
