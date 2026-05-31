@@ -87,6 +87,9 @@ export interface Config {
   heartbeatSchedulerIntervalMs: number;
   companyDeletionEnabled: boolean;
   telemetryEnabled: boolean;
+  instagramAppId: string | undefined;
+  instagramAppSecret: string | undefined;
+  instagramRedirectUri: string | undefined;
 }
 
 function detectTailnetBindHost(): string | undefined {
@@ -333,5 +336,8 @@ export function loadConfig(): Config {
     heartbeatSchedulerIntervalMs: Math.max(10000, Number(process.env.HEARTBEAT_SCHEDULER_INTERVAL_MS) || 30000),
     companyDeletionEnabled,
     telemetryEnabled: fileConfig?.telemetry?.enabled ?? true,
+    instagramAppId: process.env.INSTAGRAM_APP_ID?.trim() || undefined,
+    instagramAppSecret: process.env.INSTAGRAM_APP_SECRET?.trim() || undefined,
+    instagramRedirectUri: process.env.INSTAGRAM_REDIRECT_URI?.trim() || undefined,
   };
 }
