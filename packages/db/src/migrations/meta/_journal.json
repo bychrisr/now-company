@@ -666,6 +666,13 @@
       "when": 1780192119570,
       "tag": "0094_equal_shaman",
       "breakpoints": true
+    },
+    {
+      "idx": 95,
+      "version": "7",
+      "when": 1780235922791,
+      "tag": "0095_secret_multiple_man",
+      "breakpoints": true
     }
   ]
 }
