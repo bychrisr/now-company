@@ -8,6 +8,11 @@ import {
   index,
   uniqueIndex,
 } from "drizzle-orm/pg-core";
+import type {
+  PlatformCapabilities,
+  PlatformCopySpecs,
+  PlatformImageSpecs,
+} from "@paperclipai/shared";
 
 /**
  * Global platform registry managed by Super Admin.
@@ -28,19 +33,18 @@ export const socialPlatforms = pgTable(
     status: text("status").notNull().default("enabled"), // enabled | disabled
     sortOrder: integer("sort_order").notNull().default(0),
 
-    // Technical specs (expanded in Story 1.3)
     capabilities: jsonb("capabilities")
-      .$type<Record<string, unknown>>()
+      .$type<PlatformCapabilities>()
       .notNull()
-      .default({}),
+      .default({} as PlatformCapabilities),
     copySpecs: jsonb("copy_specs")
-      .$type<Record<string, unknown>>()
+      .$type<PlatformCopySpecs>()
       .notNull()
-      .default({}),
+      .default({} as PlatformCopySpecs),
     imageSpecs: jsonb("image_specs")
-      .$type<Record<string, unknown>>()
+      .$type<PlatformImageSpecs>()
       .notNull()
-      .default({}),
+      .default([] as PlatformImageSpecs),
 
     // Metadata
     iconUrl: text("icon_url"),

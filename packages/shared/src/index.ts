@@ -663,6 +663,12 @@ export type {
   ProviderQuotaResult,
 } from "./types/index.js";
 export { COMPANY_SEARCH_SCOPES } from "./types/index.js";
+export type {
+  PlatformCapabilities,
+  PlatformCopySpecs,
+  PlatformImageSpecs,
+  ImageFormatSlot,
+} from "./types/index.js";
 export {
   ISSUE_REFERENCE_IDENTIFIER_RE,
   buildIssueReferenceHref,

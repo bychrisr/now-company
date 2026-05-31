@@ -448,3 +448,9 @@ export type {
   PluginDatabaseNamespaceMode,
   PluginDatabaseNamespaceStatus,
 } from "./plugin.js";
+export type {
+  PlatformCapabilities,
+  PlatformCopySpecs,
+  PlatformImageSpecs,
+  ImageFormatSlot,
+} from "./social-platforms.js";
