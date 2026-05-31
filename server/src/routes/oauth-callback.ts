@@ -49,12 +49,12 @@ async function exchangeInstagramCode(
 }
 
 async function fetchInstagramMe(accessToken: string): Promise<InstagramMeResponse> {
-  const params = new URLSearchParams({
-    fields: "id,username,name",
-    access_token: accessToken,
-  });
+  const params = new URLSearchParams({ fields: "id,username,name" });
 
-  const response = await fetch(`https://graph.instagram.com/me?${params.toString()}`);
+  // Token enviado via header — nunca como query param (evita exposição em logs HTTP)
+  const response = await fetch(`https://graph.instagram.com/me?${params.toString()}`, {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
 
   if (!response.ok) {
     const text = await response.text().catch(() => "unknown error");
@@ -130,9 +130,9 @@ export function oauthCallbackRoutes(db: Db) {
     const secretKey = `oauth_${platformSlug}_${platformAccountId}`;
     const secretName = `OAuth ${platformSlug} ${handle}`;
 
-    // Verifica se já existe um secret para esta conta (upsert)
+    // Verifica se já existe um secret para esta conta (upsert com rotação de token)
     const existingSecret = await db
-      .select({ id: companySecrets.id, key: companySecrets.key })
+      .select({ id: companySecrets.id, key: companySecrets.key, status: companySecrets.status })
       .from(companySecrets)
       .where(
         and(
@@ -145,14 +145,14 @@ export function oauthCallbackRoutes(db: Db) {
     let secretId: string;
 
     if (existingSecret) {
-      // Reativa secret existente com novo token
-      await db
-        .update(companySecrets)
-        .set({ status: "active", updatedAt: new Date() })
-        .where(eq(companySecrets.id, existingSecret.id));
+      // Secret existe — reativar se necessário e rotacionar o token com o novo valor
+      if (existingSecret.status !== "active") {
+        await secrets.update(existingSecret.id, { status: "active" });
+      }
+      await secrets.rotate(existingSecret.id, { value: tokenData.access_token });
       secretId = existingSecret.id;
 
-      logger.info({ companyId, platformSlug, platformAccountId }, "Instagram OAuth: secret reactivated");
+      logger.info({ companyId, platformSlug, platformAccountId }, "Instagram OAuth: secret rotated with new token");
     } else {
       // Cria novo secret com o token cifrado pelo provider
       const created = await secrets.create(

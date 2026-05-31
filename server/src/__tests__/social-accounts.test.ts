@@ -245,4 +245,27 @@ describeEmbeddedPostgres("social account routes — isolation tests", () => {
       .expect(400);
     expect(res.body).toBeDefined();
   });
+
+  it("DELETE — double-disconnect de conta já inativa retorna 400", async () => {
+    companyAId = await seedCompany("Empresa A");
+    platformId = await seedPlatform();
+
+    const accountId = randomUUID();
+    await db.insert(companySocialAccounts).values({
+      id: accountId,
+      companyId: companyAId,
+      platformId,
+      handle: "inactive_handle",
+      platformAccountId: "456",
+      isActive: false,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+
+    const app = buildApp(companyAId);
+
+    await supertest(app)
+      .delete(`/companies/${companyAId}/social-accounts/${accountId}`)
+      .expect(400);
+  });
 });
