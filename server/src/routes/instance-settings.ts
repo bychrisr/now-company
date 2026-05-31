@@ -9,6 +9,7 @@ import { forbidden } from "../errors.js";
 import { validate } from "../middleware/validate.js";
 import { heartbeatService, instanceSettingsService, logActivity } from "../services/index.js";
 import { assertBoardOrgAccess, getActorInfo } from "./authz.js";
+import { socialPlatformsAdminRoutes } from "./social-platforms-admin.js";
 
 function assertCanManageInstanceSettings(req: Request) {
   if (req.actor.type !== "board") {
@@ -146,6 +147,8 @@ export function instanceSettingsRoutes(db: Db) {
       res.json(result);
     },
   );
+
+  router.use(socialPlatformsAdminRoutes(db));
 
   return router;
 }
