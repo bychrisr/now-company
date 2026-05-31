@@ -67,3 +67,9 @@ export type PatchInstanceExperimentalSettings = z.infer<typeof patchInstanceExpe
 export type IssueGraphLivenessAutoRecoveryRequest = z.infer<
   typeof issueGraphLivenessAutoRecoveryRequestSchema
 >;
+export const patchSocialPlatformSchema = z.object({
+  status: z.enum(["enabled", "disabled"]).optional(),
+  sortOrder: z.number().int().optional(),
+}).strict();
+
+export type PatchSocialPlatform = z.infer<typeof patchSocialPlatformSchema>;

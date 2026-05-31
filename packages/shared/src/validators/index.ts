@@ -9,6 +9,8 @@ export {
   type InstanceExperimentalSettings,
   type PatchInstanceExperimentalSettings,
   type IssueGraphLivenessAutoRecoveryRequest,
+  patchSocialPlatformSchema,
+  type PatchSocialPlatform,
 } from "./instance.js";
 
 export {

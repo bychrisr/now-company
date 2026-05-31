@@ -766,6 +766,8 @@ export {
   issueGraphLivenessAutoRecoveryRequestSchema,
   type PatchInstanceExperimentalSettings,
   type IssueGraphLivenessAutoRecoveryRequest,
+  patchSocialPlatformSchema,
+  type PatchSocialPlatform,
 } from "./validators/index.js";
 
 export {
