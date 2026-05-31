@@ -5,7 +5,7 @@
 
 | Epic | Path | Blocos | Status |
 |---|---|---|---|
-| EPIC-001 Platform Foundation | `docs/stories/epics/epic-001-platform-foundation/epic.md` | 0, 1, 4A | ✅ Stories prontas (8 stories, todas Approved) |
+| EPIC-001 Platform Foundation | `docs/stories/epics/epic-001-platform-foundation/epic.md` | 0, 1, 4A | 🔄 In Progress — 8 stories Ready (validadas pelo PO, complexity assignada) |
 | EPIC-002 Brand Identity System | `docs/stories/epics/epic-002-brand-identity-system/epic.md` | 2, 3 | 📋 Planning |
 | EPIC-003 Content Operations | `docs/stories/epics/epic-003-content-operations/epic.md` | 5 | 📋 Planning |
 

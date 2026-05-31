@@ -10,7 +10,7 @@ brainstorm_ref: docs/plans/content-brand-module-brainstorm.md
 
 # EPIC-001: Platform Foundation
 
-**Status:** 📋 Planning
+**Status:** 🔄 In Progress (stories Ready, aguardando @dev)
 **Owner:** @pm (Morgan)
 **Created:** 2026-05-30
 
@@ -130,14 +130,14 @@ Estabelecer a infraestrutura base do módulo Marca/Redes/Conteúdo: Super Admin 
 
 | ID | Title | Executor | Status |
 |----|-------|----------|--------|
-| [1.1](../../1.1.social-platforms-table-and-seed.md) | Social Platforms Table + Initial Seed | @data-engineer | Approved |
-| [1.2](../../1.2.super-admin-platforms-ui.md) | Super Admin Platforms UI | @dev | Approved |
-| [1.3](../../1.3.social-platforms-seed-expansion.md) | Seed Expansion (15+ plataformas) | @data-engineer | Approved |
-| [1.4](../../1.4.company-social-accounts-table.md) | company_social_accounts Table | @data-engineer | Approved |
-| [1.5](../../1.5.oauth-flow-and-secrets-integration.md) | OAuth Flow + Secrets Integration | @dev | Approved |
-| [1.6](../../1.6.metrics-sync-routine.md) | Metrics Sync Routine | @dev | Approved |
-| [1.7](../../1.7.company-social-accounts-ui.md) | Company Social Accounts UI | @dev | Approved |
-| [1.8](../../1.8.e2e-and-isolation-tests.md) | E2E + Multi-Tenant Isolation Tests | @qa | Approved |
+| [1.1](../../1.1.social-platforms-table-and-seed.md) | Social Platforms Table + Initial Seed | @data-engineer | Ready |
+| [1.2](../../1.2.super-admin-platforms-ui.md) | Super Admin Platforms UI | @dev | Ready |
+| [1.3](../../1.3.social-platforms-seed-expansion.md) | Seed Expansion (15+ plataformas) | @data-engineer | Ready |
+| [1.4](../../1.4.company-social-accounts-table.md) | company_social_accounts Table | @data-engineer | Ready |
+| [1.5](../../1.5.oauth-flow-and-secrets-integration.md) | OAuth Flow + Secrets Integration | @dev | Ready |
+| [1.6](../../1.6.metrics-sync-routine.md) | Metrics Sync Routine | @dev | Ready |
+| [1.7](../../1.7.company-social-accounts-ui.md) | Company Social Accounts UI | @dev | Ready |
+| [1.8](../../1.8.e2e-and-isolation-tests.md) | E2E + Multi-Tenant Isolation Tests | @qa | Ready |
 
 **Sequência de implementação:** 1.1 → 1.2 → 1.3 → 1.4 → 1.5 → 1.6 → 1.7 → 1.8
 
@@ -154,3 +154,4 @@ Estabelecer a infraestrutura base do módulo Marca/Redes/Conteúdo: Super Admin 
 | Date | Version | Description | Author |
 |------|---------|-------------|--------|
 | 2026-05-30 | 1.0 | Epic criado a partir das decisões consolidadas dos Blocos 0, 1, 4A | @pm (Morgan) |
+| 2026-05-30 | 1.1 | 8 stories drafted (1.1-1.8) e validadas por PO. Status epic: Planning→In Progress | @po (Pax) |
