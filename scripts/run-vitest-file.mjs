@@ -11,7 +11,7 @@
  *
  * How it works:
  *   1. Resolves the given path to an absolute path
- *   2. Reads the root vitest.config.ts `projects` list
+ *   2. Reads vitest.projects.json (source of truth shared with vitest.config.ts)
  *   3. Finds which project directory contains the target file/dir
  *   4. Reads the project's package.json to get its `name`
  *   5. Runs vitest with `--project <name>` and the file path filter
@@ -19,50 +19,42 @@
  * This fixes DEBT-001: without --project, Vitest workspace mode runs ALL
  * projects and ignores the file argument, causing slow and noisy test runs.
  */
-import { execSync, spawnSync } from "node:child_process";
+import { spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, statSync } from "node:fs";
+import { createRequire } from "node:module";
 import os from "node:os";
 import path from "node:path";
 
 const repoRoot = findRepoRoot();
-const rootConfig = path.join(repoRoot, "vitest.config.ts");
 
 // --- Project directory → package name mapping ---
-// Built from root vitest.config.ts `projects` array + each project's package.json.
-// We parse this statically to avoid eval'ing TypeScript at runtime.
-const PROJECT_DIRS = parseProjectDirs();
+// Loaded from vitest.projects.json — the single source of truth shared with
+// vitest.config.ts. Avoids fragile regex parsing of TypeScript config files.
+const PROJECT_DIRS = loadProjectDirs();
 
 function findRepoRoot() {
   let dir = process.cwd();
   while (dir !== path.dirname(dir)) {
-    if (existsSync(path.join(dir, "vitest.config.ts")) && existsSync(path.join(dir, "pnpm-workspace.yaml"))) {
+    if (existsSync(path.join(dir, "vitest.projects.json")) && existsSync(path.join(dir, "pnpm-workspace.yaml"))) {
       return dir;
     }
     dir = path.dirname(dir);
   }
-  // Fallback: cwd
   return process.cwd();
 }
 
-/**
- * Parse the root vitest.config.ts to extract the `projects` array.
- * We use a simple regex rather than eval'ing TypeScript.
- */
-function parseProjectDirs() {
-  const configContent = readFileSync(rootConfig, "utf-8");
-  // Match the projects array: projects: ["packages/shared", ...]
-  const match = configContent.match(/projects:\s*\[([\s\S]*?)\]/);
-  if (!match) {
-    console.error("[test:file] Could not parse projects from vitest.config.ts");
+function loadProjectDirs() {
+  const jsonPath = path.join(repoRoot, "vitest.projects.json");
+  if (!existsSync(jsonPath)) {
+    console.error("[test:file] vitest.projects.json not found in repo root");
     process.exit(1);
   }
 
+  const require = createRequire(import.meta.url);
+  const projectsList = require(jsonPath);
+
   const entries = [];
-  // Extract quoted strings from the array
-  const stringPattern = /["'`]([^"'`]+)["'`]/g;
-  let m;
-  while ((m = stringPattern.exec(match[1])) !== null) {
-    const dir = m[1];
+  for (const dir of projectsList) {
     const absDir = path.resolve(repoRoot, dir);
     const pkgJsonPath = path.join(absDir, "package.json");
     if (existsSync(pkgJsonPath)) {
