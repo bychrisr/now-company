@@ -6,7 +6,6 @@ import type { Db } from "@paperclipai/db";
 import { companySocialAccounts, companySecrets, socialPlatforms } from "@paperclipai/db";
 import { assertBoard, assertCompanyAccess } from "./authz.js";
 import { badRequest, notFound, tooManyRequests, unprocessable } from "../errors.js";
-import { loadConfig } from "../config.js";
 import { syncOneAccountById } from "../services/social-metrics-sync.js";
 import { ensureMetricsSyncRoutine } from "../services/social-metrics-sync-scheduler.js";
 
@@ -147,21 +146,34 @@ export function socialAccountRoutes(db: Db) {
         throw tooManyRequests("Too many connect attempts. Try again in a minute.");
       }
 
-      if (platformSlug !== "instagram") {
-        throw unprocessable(`OAuth for platform '${platformSlug}' not yet implemented`);
-      }
+      // Busca plataforma no banco — qualquer slug com OAuth configurado funciona
+      const [platform] = await db
+        .select()
+        .from(socialPlatforms)
+        .where(
+          and(
+            eq(socialPlatforms.slug, platformSlug),
+            eq(socialPlatforms.status, "enabled"),
+          ),
+        )
+        .limit(1);
 
-      const config = loadConfig();
-      if (!config.instagramAppId || !config.instagramAppSecret || !config.instagramRedirectUri) {
+      if (!platform) {
+        throw notFound(`Platform '${platformSlug}' not found or disabled`);
+      }
+      if (!platform.oauthAppId || !platform.oauthAppSecretEnc || !platform.oauthRedirectUri) {
         throw unprocessable(
-          "Instagram OAuth not configured — set INSTAGRAM_APP_ID, INSTAGRAM_APP_SECRET, INSTAGRAM_REDIRECT_URI",
+          `Platform '${platformSlug}' OAuth not configured — Super Admin must set App ID, App Secret and Redirect URI`,
         );
+      }
+      if (platform.implementationStatus === "not_implemented") {
+        throw unprocessable(`OAuth for platform '${platformSlug}' not yet implemented`);
       }
 
       const state = generateState(companyId);
       const authUrl = buildInstagramAuthUrl(
-        config.instagramAppId,
-        config.instagramRedirectUri,
+        platform.oauthAppId,
+        platform.oauthRedirectUri,
         state,
       );
 
