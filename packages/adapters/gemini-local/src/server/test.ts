@@ -173,8 +173,17 @@ export async function testEnvironment(
       const helloProbeTimeoutSec = Math.max(1, asNumber(config.helloProbeTimeoutSec, 60));
       const extraArgs = (() => {
         const fromExtraArgs = asStringArray(config.extraArgs);
-        if (fromExtraArgs.length > 0) return fromExtraArgs;
-        return asStringArray(config.args);
+        const baseArgs = fromExtraArgs.length > 0 ? fromExtraArgs : asStringArray(config.args);
+        // Sanitization: Remove '-c' and its associated value if present, as Gemini CLI does not support it
+        const filtered: string[] = [];
+        for (let i = 0; i < baseArgs.length; i++) {
+          if (baseArgs[i] === "-c") {
+            i++; // skip the value
+            continue;
+          }
+          filtered.push(baseArgs[i]);
+        }
+        return filtered;
       })();
 
       const args = ["--output-format", "stream-json", "--prompt", "Respond with hello."];
