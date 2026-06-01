@@ -36,6 +36,7 @@ import { CompanySettingsPluginPage } from "./pages/CompanySettingsPluginPage";
 import { CompanyAccess, CompanyAccessLegacyRoute } from "./pages/CompanyAccess";
 import { CompanyInvites } from "./pages/CompanyInvites";
 import { CompanySkills } from "./pages/CompanySkills";
+import { CompanySocialAccounts } from "./pages/CompanySocialAccounts";
 import { Secrets } from "./pages/Secrets";
 import { CompanyExport } from "./pages/CompanyExport";
 import { CompanyImport } from "./pages/CompanyImport";
@@ -44,6 +45,7 @@ import { InstanceGeneralSettings } from "./pages/InstanceGeneralSettings";
 import { InstanceAccess } from "./pages/InstanceAccess";
 import { InstanceSettings } from "./pages/InstanceSettings";
 import { InstanceExperimentalSettings } from "./pages/InstanceExperimentalSettings";
+import { InstancePlatformsAdmin } from "./pages/InstancePlatformsAdmin";
 import { ProfileSettings } from "./pages/ProfileSettings";
 import { PluginManager } from "./pages/PluginManager";
 import { PluginSettings } from "./pages/PluginSettings";
@@ -80,6 +82,7 @@ function boardRoutes() {
       <Route path="company/export/*" element={<CompanyExport />} />
       <Route path="company/import" element={<CompanyImport />} />
       <Route path="company/settings/secrets" element={<Secrets />} />
+      <Route path="company/settings/social-accounts" element={<CompanySocialAccounts />} />
       <Route path="company/settings/:settingsRoutePath/*" element={<CompanySettingsPluginPage />} />
       <Route path="skills/*" element={<CompanySkills />} />
       <Route path="settings" element={<LegacySettingsRedirect />} />
@@ -299,6 +302,7 @@ export function App() {
             <Route path="plugins" element={<PluginManager />} />
             <Route path="plugins/:pluginId" element={<PluginSettings />} />
             <Route path="adapters" element={<AdapterManager />} />
+            <Route path="platforms" element={<InstancePlatformsAdmin />} />
           </Route>
           <Route path="companies" element={<UnprefixedBoardRedirect />} />
           <Route path="issues" element={<UnprefixedBoardRedirect />} />

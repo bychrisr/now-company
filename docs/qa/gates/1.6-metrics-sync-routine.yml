@@ -1,0 +1,24 @@
+schema: 1
+story: '1.6'
+gate: PASS
+status_reason: 'Gate final PASS após spec review com 6 issues (PO reformulou ACs). Implementação: migration 0096 (needs_reauth, sync_error), serviço de sync + scheduler, 10 novos testes. 17/17 testes passando total. 11/11 ACs verificados com traceabilidade completa.'
+reviewer: Quinn
+updated: '2026-05-31T21:00:00Z'
+top_issues:
+  - id: DEBT-002
+    severity: low
+    finding: 'POST /companies/:id/social-accounts/:accountId/sync (AC10) sem teste dedicado de isolamento — sync chamado com account_id de outra empresa'
+    suggested_action: 'Coberto em Story 1.8 — teste cross-tenant adicionado em social-accounts.test.ts.'
+  - id: DEBT-003
+    severity: low
+    finding: 'fetchWithBackoff inline no service — poderia ser utilitário compartilhado (packages/shared)'
+    suggested_action: 'Mover para shared em oportunidade de refactor futura, quando um segundo serviço precisar de backoff.'
+  - id: DEBT-004
+    severity: low
+    finding: 'Cron hardcoded DEFAULT_CRON_EXPRESSION=0 */6 * * * — não configurável via env var ou DB'
+    suggested_action: 'Externalizar para env var METRICS_SYNC_CRON em sprint futura.'
+  - id: DEBT-005
+    severity: low
+    finding: 'syncMetricsForCompany processa contas sequencialmente — escalabilidade limitada a volumes altos'
+    suggested_action: 'Adicionar paralelismo controlado (ex: p-limit com concurrency=3) quando volume de contas crescer.'
+waiver: { active: false }

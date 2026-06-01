@@ -1,5 +1,6 @@
 import { createDb } from "./client.js";
 import { companies, agents, goals, projects, issues } from "./schema/index.js";
+import { seedSocialPlatforms } from "./seed-social-platforms.js";
 
 const url = process.env.DATABASE_URL;
 if (!url) throw new Error("DATABASE_URL is required");
@@ -94,6 +95,9 @@ await db.insert(issues).values([
     createdByAgentId: ceo!.id,
   },
 ]);
+
+// Platform registry (global, idempotent)
+await seedSocialPlatforms(db);
 
 console.log("Seed complete");
 process.exit(0);

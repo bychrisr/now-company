@@ -38,6 +38,7 @@ import {
   reconcilePersistedRuntimeServicesOnStartup,
   routineService,
 } from "./services/index.js";
+import { tickMetricsSyncScheduler } from "./services/social-metrics-sync-scheduler.js";
 import { createFeedbackTraceShareClientFromConfig } from "./services/feedback-share-client.js";
 import { buildRuntimeApiCandidateUrls, choosePrimaryRuntimeApiUrl } from "./runtime-api.js";
 import { createPluginWorkerManager } from "./services/plugin-worker-manager.js";
@@ -784,6 +785,19 @@ export async function startServer(): Promise<StartedServer> {
         })
         .catch((err) => {
           logger.error({ err }, "routine scheduler tick failed");
+        });
+
+      // Story 1.6 — sync de métricas sociais. Separado de tickScheduledTriggers
+      // porque executa código direto (HTTP fetch + DB), não dispatch pra agent AI.
+      // Filtra por kind='social_metrics_sync' — sem conflito com o tick acima.
+      void tickMetricsSyncScheduler(db as any, new Date())
+        .then((result) => {
+          if (result.triggered > 0) {
+            logger.info({ ...result }, "social metrics sync scheduler tick processed triggers");
+          }
+        })
+        .catch((err) => {
+          logger.error({ err }, "social metrics sync scheduler tick failed");
         });
   
       // Periodically reap orphaned runs (5-min staleness threshold) and make sure

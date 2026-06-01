@@ -1927,7 +1927,7 @@ describe("realizeExecutionWorkspace", () => {
     const bareRemote = await fs.mkdtemp(path.join(os.tmpdir(), "paperclip-worktree-bare-symref-"));
     await runGit(bareRemote, ["init", "--bare"]);
     await runGit(repoRoot, ["remote", "add", "origin", bareRemote]);
-    await runGit(repoRoot, ["checkout", "-b", "master"]);
+    await runGit(repoRoot, ["checkout", "-B", "master"]);
     await fs.writeFile(path.join(repoRoot, "master.txt"), "master\n", "utf8");
     await runGit(repoRoot, ["add", "master.txt"]);
     await runGit(repoRoot, ["commit", "-m", "add master branch"]);

@@ -200,4 +200,7 @@ export const queryKeys = {
   adapters: {
     all: ["adapters"] as const,
   },
+  socialAccounts: {
+    list: (companyId: string) => ["social-accounts", companyId] as const,
+  },
 };

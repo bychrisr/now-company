@@ -1,0 +1,12 @@
+schema: 1
+story: '1.1'
+gate: CONCERNS
+status_reason: 'Schema e seed corretos. typecheck global falha por causa externa (adaptador droid-local ausente — pré-existente, não causado por esta story). Funcionalidade 100% entregue.'
+reviewer: Quinn
+updated: '2026-05-31T12:00:00Z'
+top_issues:
+  - id: EXT-001
+    severity: low
+    finding: 'pnpm -r typecheck falha em packages/adapters/droid-local (diretório ausente) — issue pré-existente no repositório, não introduzido por esta story'
+    suggested_action: 'Remover referência ao adaptador ausente ou criar stub. Não bloqueia esta story.'
+waiver: { active: false }

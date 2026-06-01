@@ -659,6 +659,27 @@
       "when": 1779861555614,
       "tag": "0093_graceful_albert_cleary",
       "breakpoints": true
+    },
+    {
+      "idx": 94,
+      "version": "7",
+      "when": 1780192119570,
+      "tag": "0094_equal_shaman",
+      "breakpoints": true
+    },
+    {
+      "idx": 95,
+      "version": "7",
+      "when": 1780235922791,
+      "tag": "0095_secret_multiple_man",
+      "breakpoints": true
+    },
+    {
+      "idx": 96,
+      "version": "7",
+      "when": 1780261134182,
+      "tag": "0096_perfect_the_captain",
+      "breakpoints": true
     }
   ]
 }

@@ -82,3 +82,5 @@ export { pluginDatabaseNamespaces, pluginMigrations } from "./plugin_database.js
 export { pluginJobs, pluginJobRuns } from "./plugin_jobs.js";
 export { pluginWebhookDeliveries } from "./plugin_webhooks.js";
 export { pluginLogs } from "./plugin_logs.js";
+export { socialPlatforms } from "./social_platforms.js";
+export { companySocialAccounts } from "./company_social_accounts.js";
