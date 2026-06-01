@@ -93,7 +93,7 @@ interface ConnectedAccountCardProps {
 
 function ConnectedAccountCard({ account, onSync, onDisconnect, syncingId }: ConnectedAccountCardProps) {
   const isSyncing = syncingId === account.id;
-  const needsReauth = !account.isActive;
+  const needsReauth = account.needsReauth === true;
 
   return (
     <div className="flex items-start justify-between gap-4 rounded-lg border border-border bg-card p-4">

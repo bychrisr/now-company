@@ -5,7 +5,7 @@ import { z } from "zod";
 import type { Db } from "@paperclipai/db";
 import { companySocialAccounts, companySecrets, socialPlatforms } from "@paperclipai/db";
 import { assertBoard, assertCompanyAccess } from "./authz.js";
-import { badRequest, notFound, unprocessable } from "../errors.js";
+import { badRequest, notFound, tooManyRequests, unprocessable } from "../errors.js";
 import { loadConfig } from "../config.js";
 import { syncOneAccountById } from "../services/social-metrics-sync.js";
 import { ensureMetricsSyncRoutine } from "../services/social-metrics-sync-scheduler.js";
@@ -34,6 +34,32 @@ setInterval(() => {
   const now = Date.now();
   for (const [token, entry] of stateStore) {
     if (now > entry.expiresAt) stateStore.delete(token);
+  }
+}, 5 * 60 * 1000).unref();
+
+// Rate limit simples em memória pro endpoint POST /connect — 5 req/min por companyId.
+// Evita abuso (loops de OAuth) sem dependência externa. Reset por janela fixa de 60s.
+const CONNECT_RATE_WINDOW_MS = 60_000;
+const CONNECT_RATE_MAX = 5;
+const connectRateLimitStore = new Map<string, { count: number; resetAt: number }>();
+
+function checkConnectRateLimit(companyId: string): boolean {
+  const now = Date.now();
+  const entry = connectRateLimitStore.get(companyId);
+  if (!entry || now > entry.resetAt) {
+    connectRateLimitStore.set(companyId, { count: 1, resetAt: now + CONNECT_RATE_WINDOW_MS });
+    return true;
+  }
+  if (entry.count >= CONNECT_RATE_MAX) return false;
+  entry.count++;
+  return true;
+}
+
+// Limpeza periódica de entradas expiradas (a cada 5 minutos)
+setInterval(() => {
+  const now = Date.now();
+  for (const [companyId, entry] of connectRateLimitStore) {
+    if (now > entry.resetAt) connectRateLimitStore.delete(companyId);
   }
 }, 5 * 60 * 1000).unref();
 
@@ -90,6 +116,8 @@ export function socialAccountRoutes(db: Db) {
         timezone: companySocialAccounts.timezone,
         isActive: companySocialAccounts.isActive,
         isVerified: companySocialAccounts.isVerified,
+        needsReauth: companySocialAccounts.needsReauth,
+        syncError: companySocialAccounts.syncError,
         createdAt: companySocialAccounts.createdAt,
         updatedAt: companySocialAccounts.updatedAt,
         platformSlug: socialPlatforms.slug,
@@ -114,6 +142,10 @@ export function socialAccountRoutes(db: Db) {
       assertBoard(req);
       const { companyId, platformSlug } = req.params;
       assertCompanyAccess(req, companyId);
+
+      if (!checkConnectRateLimit(companyId)) {
+        throw tooManyRequests("Too many connect attempts. Try again in a minute.");
+      }
 
       if (platformSlug !== "instagram") {
         throw unprocessable(`OAuth for platform '${platformSlug}' not yet implemented`);

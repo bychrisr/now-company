@@ -18,6 +18,8 @@ export interface CompanySocialAccount {
   timezone: string | null;
   isActive: boolean;
   isVerified: boolean;
+  needsReauth: boolean;
+  syncError: string | null;
   createdAt: string;
   updatedAt: string;
 }
