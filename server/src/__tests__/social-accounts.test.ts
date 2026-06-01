@@ -5,11 +5,14 @@ import path from "node:path";
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
 import { and, eq } from "drizzle-orm";
 import {
+  agents,
   companies,
   companySocialAccounts,
   companySecrets,
   companySecretVersions,
   createDb,
+  routines,
+  routineTriggers,
   socialPlatforms,
 } from "@paperclipai/db";
 import { getEmbeddedPostgresTestSupport, startEmbeddedPostgresTestDatabase } from "./helpers/embedded-postgres.js";
@@ -49,9 +52,14 @@ describeEmbeddedPostgres("social account routes — isolation tests", () => {
   });
 
   afterEach(async () => {
+    // ensureMetricsSyncRoutine cria agent + routine + trigger ao conectar/sync.
+    // Deletar na ordem correta (FK: routineTriggers → routines → agents → companies).
     await db.delete(companySocialAccounts);
     await db.delete(companySecretVersions);
     await db.delete(companySecrets);
+    await db.delete(routineTriggers);
+    await db.delete(routines);
+    await db.delete(agents);
     await db.delete(socialPlatforms);
     await db.delete(companies);
   });
