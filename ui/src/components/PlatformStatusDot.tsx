@@ -1,5 +1,6 @@
 import type { PlatformHealthStatus } from "@/api/socialPlatforms";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { useTranslation } from "@/i18n";
 
 const colorClass: Record<PlatformHealthStatus, string> = {
   healthy: "bg-green-500",
@@ -7,26 +8,23 @@ const colorClass: Record<PlatformHealthStatus, string> = {
   error: "bg-red-500",
 };
 
-const label: Record<PlatformHealthStatus, string> = {
-  healthy: "Operational",
-  warning: "Attention",
-  error: "Not configured",
-};
-
 interface Props {
   status: PlatformHealthStatus;
 }
 
 export function PlatformStatusDot({ status }: Props) {
+  const { t } = useTranslation();
+  // Mapeia o status do health para chave i18n — os nomes batem 1:1 com platforms.health.*
+  const label = t(`platforms.health.${status}`) as string;
   return (
     <Tooltip>
       <TooltipTrigger asChild>
         <span
           className={`inline-block h-2.5 w-2.5 rounded-full cursor-default ${colorClass[status]}`}
-          aria-label={label[status]}
+          aria-label={label}
         />
       </TooltipTrigger>
-      <TooltipContent>{label[status]}</TooltipContent>
+      <TooltipContent>{label}</TooltipContent>
     </Tooltip>
   );
 }
