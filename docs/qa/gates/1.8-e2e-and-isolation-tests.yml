@@ -1,0 +1,24 @@
+schema: 1
+story: '1.8'
+gate: CONCERNS
+status_reason: 'Isolamento multi-tenant 100% coberto e correto (AC6-AC10 em Vitest, mock OAuth funcional). E2E specs estruturalmente sólidas mas seletores Playwright não validados contra UI real da Story 1.7 — risco de failure no primeiro run antes de ajuste de seletores.'
+reviewer: Quinn
+updated: '2026-05-31T23:59:00Z'
+top_issues:
+  - id: E2E-001
+    severity: medium
+    finding: 'E2E specs têm 8+ comentários TODO seletor — nenhum data-testid foi confirmado como existente na UI da Story 1.7. Os specs podem falhar por seletores incorretos antes de qualquer ajuste.'
+    suggested_action: 'Executar pnpm run test:e2e:social com servidor ativo, inspecionar cada seletor e substituir TODOs por seletores confirmados. Prioridade: connect-instagram, platform-toggle, disconnect-{id}.'
+  - id: CI-001
+    severity: low
+    finding: 'CI workflow e2e.yml — artifact upload playwright-social-report usa o mesmo path de playwright-report (tests/e2e/playwright-report). Upload duplicado não causa falha mas é desnecessário.'
+    suggested_action: 'Ajustar o path do playwright-social-report para tests/e2e/social-test-results/ ou simplesmente remover o segundo upload se os relatórios já cobrem a suíte social.'
+  - id: PROC-002
+    severity: low
+    finding: '@dev não transitou status InProgress → InReview antes do handoff para QA gate. Quinn aplicou a transição diretamente no gate para desbloquear o fechamento do EPIC-001.'
+    suggested_action: 'Registrar como débito de processo. Garantir que o próximo epic tenha checklist explícito de transição de status no task dev-develop-story.md.'
+  - id: TEST-001
+    severity: low
+    finding: 'AC15 parcialmente verificado — pnpm run typecheck e pnpm run build confirmados com exit 0, mas pnpm run test (Vitest full suite) e pnpm run test:e2e:social não foram executados e confirmados com 0 failures nesta sessão.'
+    suggested_action: 'Executar pnpm run test localmente e confirmar que social-accounts.test.ts e social-metrics-sync.test.ts passam. Se houver falha, retornar para @dev.'
+waiver: { active: false }
