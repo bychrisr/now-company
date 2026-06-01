@@ -141,7 +141,7 @@ describe("CompanySocialAccounts", () => {
 
   it("renders page heading", async () => {
     const { container } = await renderWithProviders(<CompanySocialAccounts />);
-    expect(container.textContent).toContain("Redes Sociais");
+    expect(container.textContent).toContain("Social Accounts");
   });
 
   it("shows connected account after data loads", async () => {
@@ -163,7 +163,7 @@ describe("CompanySocialAccounts", () => {
     const { container } = await renderWithProviders(<CompanySocialAccounts />);
     // Aguarda queries resolverem (heading sempre visível)
     await vi.waitFor(() => {
-      expect(container.textContent).toContain("Nenhuma conta conectada");
+      expect(container.textContent).toContain("No accounts connected");
     }, { timeout: 2000 });
     expect(container.textContent).not.toContain("@testbrand");
   });
@@ -180,13 +180,13 @@ describe("CompanySocialAccounts", () => {
     // Aguarda plataforma aparecer
     await vi.waitFor(() => {
       const btn = Array.from(container.querySelectorAll("button")).find(
-        (b) => b.textContent?.trim() === "Conectar",
+        (b) => b.textContent?.trim() === "Connect",
       );
       expect(btn).toBeTruthy();
     }, { timeout: 2000 });
 
     const connectBtn = Array.from(container.querySelectorAll("button")).find(
-      (b) => b.textContent?.trim() === "Conectar",
+      (b) => b.textContent?.trim() === "Connect",
     );
     await act(async () => { connectBtn!.click(); });
     await vi.waitFor(() => {
