@@ -14,6 +14,7 @@ interface PlatformSeedEntry {
   imageSpecs: PlatformImageSpecs;
   description?: string;
   websiteUrl?: string;
+  implementationStatus?: "implemented" | "in_progress" | "not_implemented";
 }
 
 // Fonte: docs/references/global-content-formats-atlas.md v3.1
@@ -24,6 +25,7 @@ export const SOCIAL_PLATFORMS_SEED: PlatformSeedEntry[] = [
     name: "Instagram",
     category: "social",
     sortOrder: 10,
+    implementationStatus: "implemented",
     description: "Plataforma de fotos, reels e stories com foco em descoberta visual.",
     websiteUrl: "https://instagram.com",
     capabilities: {

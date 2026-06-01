@@ -46,6 +46,18 @@ export const socialPlatforms = pgTable(
       .notNull()
       .default([] as PlatformImageSpecs),
 
+    // OAuth app credentials (instance-level, encrypted at rest)
+    oauthAppId: text("oauth_app_id"),
+    // Encriptado com PAPERCLIP_SECRETS_MASTER_KEY (AES-256-GCM, formato local_encrypted_v1 JSON).
+    // NUNCA expor em responses de API — usar hasOauthSecret: boolean no lugar.
+    oauthAppSecretEnc: text("oauth_app_secret_enc"),
+    oauthRedirectUri: text("oauth_redirect_uri"),
+
+    // Estado da implementação do fluxo OAuth para esta plataforma
+    implementationStatus: text("implementation_status")
+      .notNull()
+      .default("not_implemented"), // 'implemented' | 'in_progress' | 'not_implemented'
+
     // Metadata
     iconUrl: text("icon_url"),
     description: text("description"),
