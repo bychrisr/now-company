@@ -246,6 +246,24 @@ describeEmbeddedPostgres("social account routes — isolation tests", () => {
     expect(res.body).toBeDefined();
   });
 
+  it("POST /companies/:companyId/social-accounts/:id/sync — empresa A não dispara sync na conta da empresa B", async () => {
+    companyAId = await seedCompany("Empresa A");
+    companyBId = await seedCompany("Empresa B");
+    platformId = await seedPlatform();
+
+    const accountBId = await seedSocialAccount(companyBId, platformId);
+
+    // App autenticado como empresa A
+    const app = buildApp(companyAId);
+
+    // Empresa A tenta disparar sync na conta da empresa B → 404
+    const res = await supertest(app)
+      .post(`/companies/${companyAId}/social-accounts/${accountBId}/sync`)
+      .expect(404);
+
+    expect(res.body).toBeDefined();
+  });
+
   it("DELETE — double-disconnect de conta já inativa retorna 400", async () => {
     companyAId = await seedCompany("Empresa A");
     platformId = await seedPlatform();

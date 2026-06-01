@@ -8,10 +8,17 @@ import { secretService } from "../services/index.js";
 import { getConfiguredSecretProvider } from "../secrets/configured-provider.js";
 import { loadConfig } from "../config.js";
 import { validateAndConsumeState } from "./social-accounts.js";
+import { ensureMetricsSyncRoutine } from "../services/social-metrics-sync-scheduler.js";
 
 interface InstagramTokenResponse {
   access_token: string;
   token_type: string;
+}
+
+interface InstagramLongLivedTokenResponse {
+  access_token: string;
+  token_type: string;
+  expires_in: number;
 }
 
 interface InstagramMeResponse {
@@ -34,7 +41,8 @@ async function exchangeInstagramCode(
     code,
   });
 
-  const response = await fetch("https://api.instagram.com/oauth/access_token", {
+  const tokenApiBase = process.env.INSTAGRAM_TOKEN_API_URL ?? "https://api.instagram.com";
+  const response = await fetch(`${tokenApiBase}/oauth/access_token`, {
     method: "POST",
     body,
   });
@@ -48,11 +56,47 @@ async function exchangeInstagramCode(
   return response.json() as Promise<InstagramTokenResponse>;
 }
 
+/**
+ * Troca o short-lived token (1h) por um long-lived token (60d).
+ *
+ * Por quê: short-lived token não pode ser renovado via refresh endpoint —
+ * só long-lived suporta `refresh_access_token`. A Routine de sync de métricas
+ * (Story 1.6) precisa renovar o token periodicamente, então só faz sentido
+ * persistir o long-lived.
+ *
+ * Endpoint: GET https://graph.instagram.com/access_token
+ *   ?grant_type=ig_exchange_token&client_secret=...&access_token=<short>
+ */
+async function exchangeForLongLivedToken(
+  shortLivedToken: string,
+  appSecret: string,
+): Promise<InstagramLongLivedTokenResponse> {
+  const params = new URLSearchParams({
+    grant_type: "ig_exchange_token",
+    client_secret: appSecret,
+    access_token: shortLivedToken,
+  });
+
+  const graphBase = process.env.INSTAGRAM_GRAPH_API_URL ?? "https://graph.instagram.com";
+  const response = await fetch(`${graphBase}/access_token?${params.toString()}`, {
+    method: "GET",
+  });
+
+  if (!response.ok) {
+    const text = await response.text().catch(() => "unknown error");
+    logger.error({ status: response.status, body: text }, "Instagram long-lived token exchange failed");
+    throw unprocessable("Instagram long-lived token exchange failed");
+  }
+
+  return response.json() as Promise<InstagramLongLivedTokenResponse>;
+}
+
 async function fetchInstagramMe(accessToken: string): Promise<InstagramMeResponse> {
   const params = new URLSearchParams({ fields: "id,username,name" });
 
+  const graphBase = process.env.INSTAGRAM_GRAPH_API_URL ?? "https://graph.instagram.com";
   // Token enviado via header — nunca como query param (evita exposição em logs HTTP)
-  const response = await fetch(`https://graph.instagram.com/me?${params.toString()}`, {
+  const response = await fetch(`${graphBase}/me?${params.toString()}`, {
     headers: { Authorization: `Bearer ${accessToken}` },
   });
 
@@ -102,16 +146,28 @@ export function oauthCallbackRoutes(db: Db) {
       throw unprocessable("Instagram OAuth not configured on server");
     }
 
-    // Troca o code pelo access_token
-    const tokenData = await exchangeInstagramCode(
+    // Troca o code pelo short-lived access_token (válido por 1h)
+    const shortLivedTokenData = await exchangeInstagramCode(
       code,
       config.instagramAppId,
       config.instagramAppSecret,
       config.instagramRedirectUri,
     );
 
+    // Troca o short-lived (1h) pelo long-lived (60d) — necessário para que a
+    // Routine de sync (Story 1.6) possa renovar via /refresh_access_token.
+    // Short-lived tokens não são refresháveis.
+    const longLivedTokenData = await exchangeForLongLivedToken(
+      shortLivedTokenData.access_token,
+      config.instagramAppSecret,
+    );
+
+    // A partir daqui usamos APENAS o long-lived — é o que será persistido e
+    // o que terá vida útil suficiente para sync periódica.
+    const accessToken = longLivedTokenData.access_token;
+
     // Busca perfil do usuário na plataforma
-    const profile = await fetchInstagramMe(tokenData.access_token);
+    const profile = await fetchInstagramMe(accessToken);
 
     const platformAccountId = profile.id;
     const handle = profile.username ?? profile.name ?? platformAccountId;
@@ -149,20 +205,20 @@ export function oauthCallbackRoutes(db: Db) {
       if (existingSecret.status !== "active") {
         await secrets.update(existingSecret.id, { status: "active" });
       }
-      await secrets.rotate(existingSecret.id, { value: tokenData.access_token });
+      await secrets.rotate(existingSecret.id, { value: accessToken });
       secretId = existingSecret.id;
 
-      logger.info({ companyId, platformSlug, platformAccountId }, "Instagram OAuth: secret rotated with new token");
+      logger.info({ companyId, platformSlug, platformAccountId }, "Instagram OAuth: secret rotated with new long-lived token");
     } else {
-      // Cria novo secret com o token cifrado pelo provider
+      // Cria novo secret com o long-lived token cifrado pelo provider
       const created = await secrets.create(
         companyId,
         {
           name: secretName,
           key: secretKey,
           provider: defaultProvider,
-          value: tokenData.access_token,
-          description: `OAuth access token for ${platformSlug} account @${handle}`,
+          value: accessToken,
+          description: `OAuth long-lived access token for ${platformSlug} account @${handle}`,
         },
         { userId: null, agentId: null },
       );
@@ -203,6 +259,18 @@ export function oauthCallbackRoutes(db: Db) {
         secretId,
         isActive: true,
       });
+    }
+
+    // Garante que a Routine de sync de métricas (Story 1.6) existe pra essa
+    // empresa. Idempotente — primeira conexão cria; subsequentes não-op.
+    // Erros aqui não devem quebrar o callback OAuth (UX matters).
+    try {
+      await ensureMetricsSyncRoutine(db, companyId);
+    } catch (err) {
+      logger.error(
+        { companyId, err },
+        "Failed to ensure metrics sync routine after OAuth — sync may not run automatically",
+      );
     }
 
     return res.redirect(

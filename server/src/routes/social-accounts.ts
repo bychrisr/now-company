@@ -7,6 +7,8 @@ import { companySocialAccounts, companySecrets, socialPlatforms } from "@papercl
 import { assertBoard, assertCompanyAccess } from "./authz.js";
 import { badRequest, notFound, unprocessable } from "../errors.js";
 import { loadConfig } from "../config.js";
+import { syncOneAccountById } from "../services/social-metrics-sync.js";
+import { ensureMetricsSyncRoutine } from "../services/social-metrics-sync-scheduler.js";
 
 // State tokens em memória com TTL de 10 minutos
 // Map: stateToken → { companyId, expiresAt }
@@ -45,7 +47,8 @@ function buildInstagramAuthUrl(appId: string, redirectUri: string, state: string
     response_type: "code",
     state,
   });
-  return `https://www.facebook.com/v21.0/dialog/oauth?${params.toString()}`;
+  const authBase = process.env.INSTAGRAM_AUTH_BASE_URL ?? "https://www.facebook.com";
+  return `${authBase}/v21.0/dialog/oauth?${params.toString()}`;
 }
 
 const listQuerySchema = z.object({
@@ -178,6 +181,29 @@ export function socialAccountRoutes(db: Db) {
 
     res.status(204).send();
   });
+
+  // POST /companies/:companyId/social-accounts/:id/sync — trigger manual de sync
+  // (Story 1.6, AC10). Útil pra debug e UX (botão "atualizar agora").
+  router.post(
+    "/companies/:companyId/social-accounts/:id/sync",
+    async (req, res) => {
+      assertBoard(req);
+      const { companyId, id } = req.params;
+      assertCompanyAccess(req, companyId);
+
+      const parsedId = z.string().uuid().safeParse(id);
+      if (!parsedId.success) throw badRequest("Invalid account ID");
+
+      // Garante que a Routine de sync existe (idempotente). Útil se a empresa
+      // foi criada antes desta feature ou se a Routine foi removida.
+      await ensureMetricsSyncRoutine(db, companyId);
+
+      const result = await syncOneAccountById(db, companyId, parsedId.data);
+      if (!result) throw notFound("Social account not found or inactive");
+
+      res.json(result);
+    },
+  );
 
   return router;
 }
