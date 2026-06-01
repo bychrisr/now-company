@@ -673,6 +673,13 @@
       "when": 1780235922791,
       "tag": "0095_secret_multiple_man",
       "breakpoints": true
+    },
+    {
+      "idx": 96,
+      "version": "7",
+      "when": 1780261134182,
+      "tag": "0096_perfect_the_captain",
+      "breakpoints": true
     }
   ]
 }

@@ -59,6 +59,14 @@ export const companySocialAccounts = pgTable(
     isActive: boolean("is_active").notNull().default(true),
     isVerified: boolean("is_verified").notNull().default(false),
 
+    // Reautenticação necessária — populado pela Routine de sync (Story 1.6) quando
+    // refresh do token OAuth falha. UI deve exibir CTA "reconectar conta" quando true.
+    needsReauth: boolean("needs_reauth").notNull().default(false),
+
+    // Último erro de sync de métricas. Útil pra UI mostrar contexto do needsReauth
+    // ou pra debug. Sobrescrito a cada novo erro; limpo (NULL) em sync bem-sucedido.
+    syncError: text("sync_error"),
+
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },
