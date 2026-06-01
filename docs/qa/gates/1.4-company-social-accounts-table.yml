@@ -1,0 +1,16 @@
+schema: 1
+story: '1.4'
+gate: PASS
+status_reason: 'Gate retrospectivo. Story foi direto para Done sem QA formal — violação de processo corrigida aqui. Migration DDL validado: todos os campos AC4, constraints, FKs e índices corretos. Regra anti-token preservada (sem access_token/refresh_token na tabela). needsReauth e syncError adicionados posteriormente via migration 0096 (Story 1.6 — correto, pois campos pertencem ao ciclo de métricas).'
+reviewer: Quinn
+updated: '2026-05-31T23:59:00Z'
+top_issues:
+  - id: PROC-001
+    severity: low
+    finding: 'Story foi marcada Done sem QA gate formal — violação do workflow SDC. Gate retrospectivo aplicado agora.'
+    suggested_action: 'Mesma ação que PROC-001 em 1.3.'
+  - id: SCH-001
+    severity: low
+    finding: 'needsReauth (bool) e syncError (text) ausentes da tabela no momento da entrega — adicionados via migration 0096 em Story 1.6. Tecnicamente fora do escopo original mas arquiteturalmente correto: campos pertencem ao ciclo de sync, não ao schema base.'
+    suggested_action: 'Documentar padrão: campos de ciclo de vida (sync, auth state) podem ser adicionados em stories subsequentes via ALTER. Sem ação técnica necessária.'
+waiver: { active: false }

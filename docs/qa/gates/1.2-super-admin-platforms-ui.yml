@@ -1,0 +1,8 @@
+schema: 1
+story: '1.2'
+gate: PASS
+status_reason: 'Todos os 12 ACs verificados. 6/6 testes passando em InstancePlatformsAdmin.test.tsx. Bug parsedId.data corrigido durante implementação. Código limpo e consistente com padrões do projeto.'
+reviewer: Quinn
+updated: '2026-05-31T13:00:00Z'
+top_issues: []
+waiver: { active: false }
