@@ -106,6 +106,24 @@ pnpm test
 pnpm test:watch
 ```
 
+To run a specific test file or directory, avoiding executing all workspace projects (resolving slow execution in workspace mode):
+
+```sh
+pnpm test:file <path-to-test-file-or-dir>
+# Example:
+pnpm test:file server/src/__tests__/health.test.ts
+# With watch mode:
+pnpm test:file server/src/__tests__/health.test.ts --watch
+```
+
+You can also run all tests of a specific project workspace:
+
+```sh
+pnpm test:project <project-name>
+# Example:
+pnpm test:project @paperclipai/shared
+```
+
 Browser suites stay separate:
 
 ```sh

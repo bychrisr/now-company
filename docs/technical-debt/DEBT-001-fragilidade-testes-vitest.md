@@ -22,3 +22,12 @@ Isso torna o ciclo de feedback para o desenvolvedor extremamente lento, barulhen
 1.  **Investigar a Causa Raiz:** Entender por que o Vitest está ignorando o argumento de arquivo no modo de múltiplos projetos.
 2.  **Criar um Script Wrapper:** Desenvolver um script em `package.json` (ex: `pnpm test:file <path>`) que construa e execute o comando correto, possivelmente usando o argumento `--project` dinamicamente para isolar o teste.
 3.  **Documentar:** Documentar claramente no `CONTRIBUTING.md` ou `DEVELOPING.md` como executar testes isolados.
+
+## Resolução (2026-06-01)
+* **ID:** Resolvido por @dev (Dex) na branch `fix/debt-001-vitest-test-isolation`.
+* **Implementação:** Foi criado o script wrapper em [scripts/run-vitest-file.mjs](file:///home/bychrisr/projects/work/now-company/scripts/run-vitest-file.mjs) que analisa dinamicamente em qual subprojeto do workspace o arquivo ou diretório de teste especificado se encontra e executa o Vitest apontando diretamente para o `--project` correspondente.
+* **Comandos Adicionados no package.json:**
+  - `pnpm test:file <path>`: Executa testes isoladamente para um arquivo ou diretório específico.
+  - `pnpm test:project <project-name>`: Executa todos os testes de um subprojeto workspace específico.
+* **Documentação:** O arquivo [doc/DEVELOPING.md](file:///home/bychrisr/projects/work/now-company/doc/DEVELOPING.md) foi atualizado detalhando o uso dos comandos.
+
