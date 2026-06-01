@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { ChevronLeft, CloudUpload, KeyRound, MailPlus, MonitorCog, Puzzle, Settings, SlidersHorizontal, Users } from "lucide-react";
+import { ChevronLeft, CloudUpload, KeyRound, MailPlus, MonitorCog, Puzzle, Settings, Share2, SlidersHorizontal, Users } from "lucide-react";
 import { sidebarBadgesApi } from "@/api/sidebarBadges";
 import { instanceSettingsApi } from "@/api/instanceSettings";
 import { ApiError } from "@/api/client";
@@ -99,6 +99,12 @@ export function CompanySettingsSidebar() {
               />
             ))}
           <SidebarNavItem to="/company/settings/invites" label="Invites" icon={MailPlus} end />
+          <SidebarNavItem
+            to="/company/settings/social-accounts"
+            label="Redes Sociais"
+            icon={Share2}
+            end
+          />
           <SidebarNavItem to="/company/settings/secrets" label="Secrets" icon={KeyRound} end />
         </div>
       </nav>
