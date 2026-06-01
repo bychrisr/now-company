@@ -1,24 +1,8 @@
 import { defineConfig } from "vitest/config";
+import projects from "./vitest.projects.json";
 
 export default defineConfig({
   test: {
-    projects: [
-      "packages/shared",
-      "packages/db",
-      "packages/adapter-utils",
-      "packages/adapters/acpx-local",
-      "packages/adapters/claude-local",
-      "packages/adapters/codex-local",
-      "packages/adapters/cursor-cloud",
-      "packages/adapters/cursor-local",
-      "packages/adapters/gemini-local",
-      "packages/adapters/grok-local",
-      "packages/adapters/opencode-local",
-      "packages/adapters/pi-local",
-      "packages/plugins/sdk",
-      "server",
-      "ui",
-      "cli",
-    ],
+    projects,
   },
 });
