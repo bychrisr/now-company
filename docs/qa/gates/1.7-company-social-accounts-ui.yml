@@ -1,0 +1,20 @@
+schema: 1
+story: '1.7'
+gate: CONCERNS
+status_reason: 'Funcionalidade core completa e todos ACs principais atendidos. Badge needs_reauth nunca renderiza (lógica de filtro remove contas inativas antes do card), demais findings são non-blocking.'
+reviewer: Quinn
+updated: '2026-05-31T22:15:00Z'
+top_issues:
+  - id: REQ-001
+    severity: medium
+    finding: 'Badge "Reautenticação necessária" nunca é exibido — connectedAccounts filtra isActive:false antes de renderizar o ConnectedAccountCard, logo a condição !account.isActive é sempre false dentro do card'
+    suggested_action: 'Adicionar campo needsReauth no schema de resposta da API, ou usar heurística (ex: lastSyncedAt > 7 dias + campo de status de erro). Tratar em próxima sprint.'
+  - id: TEST-001
+    severity: low
+    finding: 'Faltam testes para: disconnect dialog confirm, sync mutation call, accountsError state, OAuth callback toast (status=connected query param)'
+    suggested_action: 'Adicionar cobertura nos próximos sprints — não bloqueia entrega atual.'
+  - id: MNT-001
+    severity: low
+    finding: 'queryKey: ["social-platforms"] está inline em vez de usar queryKeys.socialPlatforms.list() — inconsistente com padrão do projeto'
+    suggested_action: 'Mover para queryKeys.ts em próxima oportunidade de refactor.'
+waiver: { active: false }
