@@ -317,6 +317,66 @@
           "confirm": "Arquivar a empresa \"{{name}}\"? Ela será ocultada da barra lateral.",
           "failed": "Falha ao arquivar a empresa"
         }
+      },
+      "socialAccounts": {
+        "title": "Redes Sociais",
+        "description": "Conecte e gerencie as contas sociais da empresa.",
+        "breadcrumb": "Redes Sociais",
+        "connectedAccountsTitle": "Contas conectadas",
+        "noAccountsConnected": "Nenhuma conta conectada. Conecte uma conta abaixo.",
+        "loadError": "Erro ao carregar contas. Tente recarregar a página.",
+        "connectNewAccountTitle": "Conectar nova conta",
+        "allPlatformsConnected": "Todas as plataformas disponíveis já estão conectadas.",
+        "connect": "Conectar",
+        "connecting": "Aguarde...",
+        "syncNow": "Sincronizar agora",
+        "syncAriaLabel": "Sincronizar",
+        "disconnectAriaLabel": "Desconectar",
+        "needsReauth": "Reautenticação necessária",
+        "followers": "{{count}} seguidores",
+        "engagement": "Engajamento:",
+        "neverSynced": "Nunca sincronizado",
+        "justNow": "Agora mesmo",
+        "minutesAgo": "Há {{minutes}}min",
+        "hoursAgo": "Há {{hours}}h",
+        "daysAgo": "Há {{days}}d",
+        "disconnect": {
+          "title": "Desconectar conta",
+          "description": "Tem certeza que deseja desconectar {{handle}}? O token de acesso será revogado. Você poderá reconectar a qualquer momento.",
+          "cancel": "Cancelar",
+          "confirm": "Desconectar",
+          "confirming": "Desconectando..."
+        },
+        "toast": {
+          "connected": {
+            "title": "Conta conectada",
+            "body": "{{platform}} conectado com sucesso."
+          },
+          "connectError": {
+            "title": "Erro ao conectar",
+            "body": "Não foi possível conectar a conta. Tente novamente."
+          },
+          "synced": {
+            "title": "Sincronizado",
+            "body": "Métricas atualizadas com sucesso."
+          },
+          "syncError": {
+            "title": "Erro ao sincronizar",
+            "body": "Não foi possível atualizar as métricas."
+          },
+          "disconnected": {
+            "title": "Conta desconectada",
+            "body": "A conta foi removida com sucesso."
+          },
+          "disconnectError": {
+            "title": "Erro ao desconectar",
+            "body": "Não foi possível remover a conta."
+          },
+          "authError": {
+            "title": "Erro ao conectar",
+            "body": "Não foi possível iniciar a autenticação. Tente novamente."
+          }
+        }
       }
     },
     "projects": {

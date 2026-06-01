@@ -26,17 +26,20 @@ import { useBreadcrumbs } from "@/context/BreadcrumbContext";
 import { useCompany } from "@/context/CompanyContext";
 import { useToast } from "@/context/ToastContext";
 import { queryKeys } from "@/lib/queryKeys";
+import { useTranslation } from "@/i18n";
 
-function formatRelativeTime(dateStr: string | null): string {
-  if (!dateStr) return "Nunca sincronizado";
+type TFunc = ReturnType<typeof useTranslation>["t"];
+
+function formatRelativeTime(dateStr: string | null, t: TFunc, ns: string): string {
+  if (!dateStr) return t(`${ns}.neverSynced`);
   const diff = Date.now() - new Date(dateStr).getTime();
   const minutes = Math.floor(diff / 60_000);
-  if (minutes < 1) return "Agora mesmo";
-  if (minutes < 60) return `Há ${minutes}min`;
+  if (minutes < 1) return t(`${ns}.justNow`);
+  if (minutes < 60) return t(`${ns}.minutesAgo`, { minutes });
   const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `Há ${hours}h`;
+  if (hours < 24) return t(`${ns}.hoursAgo`, { hours });
   const days = Math.floor(hours / 24);
-  return `Há ${days}d`;
+  return t(`${ns}.daysAgo`, { days });
 }
 
 function formatFollowers(count: number | null): string {
@@ -56,27 +59,27 @@ interface DisconnectDialogProps {
   onConfirm: () => void;
   onCancel: () => void;
   isPending: boolean;
+  t: TFunc;
+  ns: string;
 }
 
-function DisconnectDialog({ account, onConfirm, onCancel, isPending }: DisconnectDialogProps) {
+function DisconnectDialog({ account, onConfirm, onCancel, isPending, t, ns }: DisconnectDialogProps) {
+  const handle = account?.handle ?? account?.displayName ?? account?.platformName ?? "";
   return (
     <Dialog open={!!account} onOpenChange={(open) => { if (!open) onCancel(); }}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Desconectar conta</DialogTitle>
+          <DialogTitle>{t(`${ns}.disconnect.title`)}</DialogTitle>
           <DialogDescription>
-            Tem certeza que deseja desconectar{" "}
-            <strong>{account?.handle ?? account?.displayName ?? account?.platformName}</strong>?
-            <br />
-            O token de acesso será revogado. Você poderá reconectar a qualquer momento.
+            {t(`${ns}.disconnect.description`, { handle })}
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
           <Button variant="outline" onClick={onCancel} disabled={isPending}>
-            Cancelar
+            {t(`${ns}.disconnect.cancel`)}
           </Button>
           <Button variant="destructive" onClick={onConfirm} disabled={isPending}>
-            {isPending ? "Desconectando..." : "Desconectar"}
+            {isPending ? t(`${ns}.disconnect.confirming`) : t(`${ns}.disconnect.confirm`)}
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -89,9 +92,11 @@ interface ConnectedAccountCardProps {
   onSync: (id: string) => void;
   onDisconnect: (account: CompanySocialAccount) => void;
   syncingId: string | null;
+  t: TFunc;
+  ns: string;
 }
 
-function ConnectedAccountCard({ account, onSync, onDisconnect, syncingId }: ConnectedAccountCardProps) {
+function ConnectedAccountCard({ account, onSync, onDisconnect, syncingId, t, ns }: ConnectedAccountCardProps) {
   const isSyncing = syncingId === account.id;
   const needsReauth = account.needsReauth === true;
 
@@ -110,7 +115,7 @@ function ConnectedAccountCard({ account, onSync, onDisconnect, syncingId }: Conn
             {needsReauth && (
               <Badge variant="destructive" className="flex items-center gap-1 text-xs">
                 <AlertCircle className="h-3 w-3" />
-                Reautenticação necessária
+                {t(`${ns}.needsReauth`)}
               </Badge>
             )}
           </div>
@@ -120,13 +125,13 @@ function ConnectedAccountCard({ account, onSync, onDisconnect, syncingId }: Conn
           <div className="flex items-center gap-3 mt-1.5 flex-wrap">
             <span className="flex items-center gap-1 text-xs text-muted-foreground">
               <Users className="h-3 w-3" />
-              {formatFollowers(account.followerCount)} seguidores
+              {t(`${ns}.followers`, { count: formatFollowers(account.followerCount) })}
             </span>
             <span className="text-xs text-muted-foreground">
-              Engajamento: {formatEngagement(account.avgEngagementRate)}
+              {t(`${ns}.engagement`)} {formatEngagement(account.avgEngagementRate)}
             </span>
             <span className="text-xs text-muted-foreground">
-              {formatRelativeTime(account.lastSyncedAt)}
+              {formatRelativeTime(account.lastSyncedAt, t, ns)}
             </span>
           </div>
         </div>
@@ -137,20 +142,20 @@ function ConnectedAccountCard({ account, onSync, onDisconnect, syncingId }: Conn
           size="sm"
           onClick={() => onSync(account.id)}
           disabled={isSyncing}
-          title="Sincronizar agora"
+          title={t(`${ns}.syncNow`)}
         >
           <RefreshCw className={`h-4 w-4 ${isSyncing ? "animate-spin" : ""}`} />
-          <span className="sr-only">Sincronizar</span>
+          <span className="sr-only">{t(`${ns}.syncAriaLabel`)}</span>
         </Button>
         <Button
           variant="ghost"
           size="sm"
           onClick={() => onDisconnect(account)}
           className="text-destructive hover:text-destructive"
-          title="Desconectar"
+          title={t(`${ns}.disconnectAriaLabel`)}
         >
           <Trash2 className="h-4 w-4" />
-          <span className="sr-only">Desconectar</span>
+          <span className="sr-only">{t(`${ns}.disconnectAriaLabel`)}</span>
         </Button>
       </div>
     </div>
@@ -161,9 +166,11 @@ interface AvailablePlatformCardProps {
   platform: SocialPlatform;
   onConnect: (slug: string) => void;
   isConnecting: boolean;
+  t: TFunc;
+  ns: string;
 }
 
-function AvailablePlatformCard({ platform, onConnect, isConnecting }: AvailablePlatformCardProps) {
+function AvailablePlatformCard({ platform, onConnect, isConnecting, t, ns }: AvailablePlatformCardProps) {
   return (
     <div className="flex items-center justify-between gap-4 rounded-lg border border-border bg-card p-4">
       <div className="flex items-center gap-3">
@@ -183,13 +190,15 @@ function AvailablePlatformCard({ platform, onConnect, isConnecting }: AvailableP
         onClick={() => onConnect(platform.slug)}
         disabled={isConnecting}
       >
-        {isConnecting ? "Aguarde..." : "Conectar"}
+        {isConnecting ? t(`${ns}.connecting`) : t(`${ns}.connect`)}
       </Button>
     </div>
   );
 }
 
 export function CompanySocialAccounts() {
+  const { t } = useTranslation();
+  const ns = "pages.companySettings.socialAccounts";
   const { selectedCompanyId } = useCompany();
   const { setBreadcrumbs } = useBreadcrumbs();
   const { pushToast } = useToast();
@@ -202,33 +211,31 @@ export function CompanySocialAccounts() {
 
   useEffect(() => {
     setBreadcrumbs([
-      { label: "Company Settings", href: "/company/settings" },
-      { label: "Redes Sociais" },
+      { label: t("pages.companySettings.title"), href: "/company/settings" },
+      { label: t(`${ns}.breadcrumb`) },
     ]);
-  }, [setBreadcrumbs]);
+  }, [setBreadcrumbs, t, ns]);
 
-  // Detecta retorno do OAuth callback
   useEffect(() => {
     const status = searchParams.get("status");
     const platform = searchParams.get("platform");
     if (status === "connected" && platform) {
       pushToast({
-        title: "Conta conectada",
-        body: `${platform} conectado com sucesso.`,
+        title: t(`${ns}.toast.connected.title`),
+        body: t(`${ns}.toast.connected.body`, { platform }),
         tone: "success",
       });
-      // Remove query params sem re-render desnecessário
       setSearchParams({}, { replace: true });
       queryClient.invalidateQueries({ queryKey: queryKeys.socialAccounts.list(selectedCompanyId!) });
     } else if (status === "error") {
       pushToast({
-        title: "Erro ao conectar",
-        body: "Não foi possível conectar a conta. Tente novamente.",
+        title: t(`${ns}.toast.authError.title`),
+        body: t(`${ns}.toast.authError.body`),
         tone: "error",
       });
       setSearchParams({}, { replace: true });
     }
-  }, [searchParams, setSearchParams, pushToast, queryClient, selectedCompanyId]);
+  }, [searchParams, setSearchParams, pushToast, queryClient, selectedCompanyId, t, ns]);
 
   const {
     data: accounts,
@@ -251,10 +258,10 @@ export function CompanySocialAccounts() {
     onMutate: ({ id }) => setSyncingId(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.socialAccounts.list(selectedCompanyId!) });
-      pushToast({ title: "Sincronizado", body: "Métricas atualizadas com sucesso.", tone: "success" });
+      pushToast({ title: t(`${ns}.toast.synced.title`), body: t(`${ns}.toast.synced.body`), tone: "success" });
     },
     onError: () => {
-      pushToast({ title: "Erro ao sincronizar", body: "Não foi possível atualizar as métricas.", tone: "error" });
+      pushToast({ title: t(`${ns}.toast.syncError.title`), body: t(`${ns}.toast.syncError.body`), tone: "error" });
     },
     onSettled: () => setSyncingId(null),
   });
@@ -264,11 +271,11 @@ export function CompanySocialAccounts() {
       socialAccountsApi.disconnect(selectedCompanyId!, id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.socialAccounts.list(selectedCompanyId!) });
-      pushToast({ title: "Conta desconectada", body: "A conta foi removida com sucesso.", tone: "success" });
+      pushToast({ title: t(`${ns}.toast.disconnected.title`), body: t(`${ns}.toast.disconnected.body`), tone: "success" });
       setDisconnectTarget(null);
     },
     onError: () => {
-      pushToast({ title: "Erro ao desconectar", body: "Não foi possível remover a conta.", tone: "error" });
+      pushToast({ title: t(`${ns}.toast.disconnectError.title`), body: t(`${ns}.toast.disconnectError.body`), tone: "error" });
     },
   });
 
@@ -281,7 +288,7 @@ export function CompanySocialAccounts() {
     },
     onError: () => {
       setConnectingSlug(null);
-      pushToast({ title: "Erro ao conectar", body: "Não foi possível iniciar a autenticação.", tone: "error" });
+      pushToast({ title: t(`${ns}.toast.connectError.title`), body: t(`${ns}.toast.connectError.body`), tone: "error" });
     },
   });
 
@@ -296,15 +303,14 @@ export function CompanySocialAccounts() {
   return (
     <div className="flex flex-col gap-6 max-w-2xl">
       <div>
-        <h1 className="text-xl font-semibold">Redes Sociais</h1>
+        <h1 className="text-xl font-semibold">{t(`${ns}.title`)}</h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Conecte e gerencie as contas sociais da empresa.
+          {t(`${ns}.description`)}
         </p>
       </div>
 
-      {/* Contas conectadas */}
       <section>
-        <h2 className="text-sm font-semibold mb-3">Contas conectadas</h2>
+        <h2 className="text-sm font-semibold mb-3">{t(`${ns}.connectedAccountsTitle`)}</h2>
         {isLoading ? (
           <div className="flex flex-col gap-3">
             <Skeleton className="h-20 w-full rounded-lg" />
@@ -312,11 +318,11 @@ export function CompanySocialAccounts() {
           </div>
         ) : accountsError ? (
           <p className="text-sm text-destructive">
-            Erro ao carregar contas. Tente recarregar a página.
+            {t(`${ns}.loadError`)}
           </p>
         ) : connectedAccounts.length === 0 ? (
           <p className="text-sm text-muted-foreground">
-            Nenhuma conta conectada. Conecte uma conta abaixo.
+            {t(`${ns}.noAccountsConnected`)}
           </p>
         ) : (
           <div className="flex flex-col gap-3">
@@ -327,22 +333,23 @@ export function CompanySocialAccounts() {
                 onSync={(id) => syncMutation.mutate({ id })}
                 onDisconnect={setDisconnectTarget}
                 syncingId={syncingId}
+                t={t}
+                ns={ns}
               />
             ))}
           </div>
         )}
       </section>
 
-      {/* Plataformas disponíveis para conectar */}
       <section>
-        <h2 className="text-sm font-semibold mb-3">Conectar nova conta</h2>
+        <h2 className="text-sm font-semibold mb-3">{t(`${ns}.connectNewAccountTitle`)}</h2>
         {isLoading ? (
           <div className="flex flex-col gap-3">
             <Skeleton className="h-16 w-full rounded-lg" />
           </div>
         ) : availablePlatforms.length === 0 ? (
           <p className="text-sm text-muted-foreground">
-            Todas as plataformas disponíveis já estão conectadas.
+            {t(`${ns}.allPlatformsConnected`)}
           </p>
         ) : (
           <div className="flex flex-col gap-3">
@@ -352,6 +359,8 @@ export function CompanySocialAccounts() {
                 platform={platform}
                 onConnect={(slug) => connectMutation.mutate({ slug })}
                 isConnecting={connectingSlug === platform.slug}
+                t={t}
+                ns={ns}
               />
             ))}
           </div>
@@ -365,6 +374,8 @@ export function CompanySocialAccounts() {
         }}
         onCancel={() => setDisconnectTarget(null)}
         isPending={disconnectMutation.isPending}
+        t={t}
+        ns={ns}
       />
     </div>
   );

@@ -359,6 +359,66 @@
           "confirm": "Archive company \"{{name}}\"? It will be hidden from the sidebar.",
           "failed": "Failed to archive company"
         }
+      },
+      "socialAccounts": {
+        "title": "Social Accounts",
+        "description": "Connect and manage your company's social accounts.",
+        "breadcrumb": "Social Accounts",
+        "connectedAccountsTitle": "Connected accounts",
+        "noAccountsConnected": "No accounts connected. Connect an account below.",
+        "loadError": "Failed to load accounts. Try reloading the page.",
+        "connectNewAccountTitle": "Connect new account",
+        "allPlatformsConnected": "All available platforms are already connected.",
+        "connect": "Connect",
+        "connecting": "Please wait...",
+        "syncNow": "Sync now",
+        "syncAriaLabel": "Sync",
+        "disconnectAriaLabel": "Disconnect",
+        "needsReauth": "Re-authentication required",
+        "followers": "{{count}} followers",
+        "engagement": "Engagement:",
+        "neverSynced": "Never synced",
+        "justNow": "Just now",
+        "minutesAgo": "{{minutes}}m ago",
+        "hoursAgo": "{{hours}}h ago",
+        "daysAgo": "{{days}}d ago",
+        "disconnect": {
+          "title": "Disconnect account",
+          "description": "Are you sure you want to disconnect {{handle}}? The access token will be revoked. You can reconnect at any time.",
+          "cancel": "Cancel",
+          "confirm": "Disconnect",
+          "confirming": "Disconnecting..."
+        },
+        "toast": {
+          "connected": {
+            "title": "Account connected",
+            "body": "{{platform}} connected successfully."
+          },
+          "connectError": {
+            "title": "Connection failed",
+            "body": "Could not connect the account. Please try again."
+          },
+          "synced": {
+            "title": "Synced",
+            "body": "Metrics updated successfully."
+          },
+          "syncError": {
+            "title": "Sync failed",
+            "body": "Could not update metrics."
+          },
+          "disconnected": {
+            "title": "Account disconnected",
+            "body": "The account was removed successfully."
+          },
+          "disconnectError": {
+            "title": "Disconnect failed",
+            "body": "Could not remove the account."
+          },
+          "authError": {
+            "title": "Connection failed",
+            "body": "Could not start authentication. Please try again."
+          }
+        }
       }
     }
   }
