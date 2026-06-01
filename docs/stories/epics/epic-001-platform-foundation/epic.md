@@ -1,7 +1,7 @@
 ---
 epic_id: EPIC-001
 title: Platform Foundation
-status: Planning
+status: InProgress
 owner: "@pm (Morgan)"
 created: 2026-05-30
 blocks_covered: [0, 1, 4A]
@@ -10,7 +10,7 @@ brainstorm_ref: docs/plans/content-brand-module-brainstorm.md
 
 # EPIC-001: Platform Foundation
 
-**Status:** 🔄 In Progress (stories Ready, aguardando @dev)
+**Status:** 🔄 InProgress — Stories 1.1-1.7 Done, Story 1.8 em andamento (gate QA pendente)
 **Owner:** @pm (Morgan)
 **Created:** 2026-05-30
 
