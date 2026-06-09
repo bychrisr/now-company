@@ -51,7 +51,7 @@ test.describe("Company — social accounts", () => {
     await page.goto("/company/settings/social-accounts");
     await page.waitForLoadState("networkidle");
 
-    // TODO: ajustar seletor após inspeção da UI real (Story 1.7).
+    // Botão de conectar agora tem data-testid="connect-{slug}" na UI real.
     const connectButton = page
       .locator('[data-testid="connect-instagram"]')
       .or(page.getByRole("button", { name: /Conectar Instagram|Connect Instagram/i }))

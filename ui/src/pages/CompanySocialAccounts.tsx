@@ -153,6 +153,7 @@ function ConnectedAccountCard({ account, onSync, onDisconnect, syncingId, t, ns 
           onClick={() => onDisconnect(account)}
           className="text-destructive hover:text-destructive"
           title={t(`${ns}.disconnectAriaLabel`)}
+          data-testid={`disconnect-${account.id}`}
         >
           <Trash2 className="h-4 w-4" />
           <span className="sr-only">{t(`${ns}.disconnectAriaLabel`)}</span>
@@ -172,7 +173,10 @@ interface AvailablePlatformCardProps {
 
 function AvailablePlatformCard({ platform, onConnect, isConnecting, t, ns }: AvailablePlatformCardProps) {
   return (
-    <div className="flex items-center justify-between gap-4 rounded-lg border border-border bg-card p-4">
+    <div
+      className="flex items-center justify-between gap-4 rounded-lg border border-border bg-card p-4"
+      data-platform-slug={platform.slug}
+    >
       <div className="flex items-center gap-3">
         <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-muted">
           <Globe className="h-4 w-4 text-muted-foreground" />
@@ -189,6 +193,8 @@ function AvailablePlatformCard({ platform, onConnect, isConnecting, t, ns }: Ava
         size="sm"
         onClick={() => onConnect(platform.slug)}
         disabled={isConnecting}
+        data-testid={`connect-${platform.slug}`}
+        data-connect-slug={platform.slug}
       >
         {isConnecting ? t(`${ns}.connecting`) : t(`${ns}.connect`)}
       </Button>
@@ -341,7 +347,7 @@ export function CompanySocialAccounts() {
         )}
       </section>
 
-      <section>
+      <section data-testid="available-platforms">
         <h2 className="text-sm font-semibold mb-3">{t(`${ns}.connectNewAccountTitle`)}</h2>
         {isLoading ? (
           <div className="flex flex-col gap-3">

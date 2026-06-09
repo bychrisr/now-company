@@ -214,6 +214,8 @@ export function InstancePlatformsAdmin() {
             return (
               <div
                 key={platform.id}
+                data-testid={`platform-row-${platform.slug}`}
+                data-platform-slug={platform.slug}
                 className={cn(
                   "rounded-lg border bg-card px-4 py-3 transition-colors",
                   platform.status === "disabled" && "opacity-75",
@@ -276,6 +278,7 @@ export function InstancePlatformsAdmin() {
                         checked={platform.status === "enabled"}
                         onCheckedChange={(checked) => handleStatusToggle(platform, checked)}
                         disabled={isMutating}
+                        data-testid="platform-toggle"
                       />
                       <span
                         className={cn(

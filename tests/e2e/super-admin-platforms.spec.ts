@@ -18,8 +18,7 @@ test.describe("Super Admin — platforms management", () => {
     await page.goto("/instance/settings/platforms");
     await page.waitForLoadState("networkidle");
 
-    // TODO: ajustar seletor após inspeção da UI real — a Story 1.7 pode usar
-    // um data-testid diferente. Tentamos primeiro um seletor semântico amplo.
+    // data-testid="platform-row-{slug}" e data-platform-slug="{slug}" agora presentes na UI real.
     const platformRow = page
       .locator('[data-testid^="platform-row-"]')
       .or(page.locator("[data-platform-slug]"))
@@ -34,7 +33,7 @@ test.describe("Super Admin — platforms management", () => {
       "";
     expect(platformSlug).not.toBe("");
 
-    // TODO: ajustar seletor — toggle pode ser um switch/checkbox com role específico.
+    // Toggle tem data-testid="platform-toggle" e role="switch" na UI real.
     const toggle = platformRow
       .getByRole("switch")
       .or(platformRow.locator('[data-testid="platform-toggle"]'))
@@ -73,6 +72,7 @@ test.describe("Super Admin — platforms management", () => {
     await page.goto("/instance/settings/platforms");
     await page.waitForLoadState("networkidle");
 
+    // data-testid="platform-row-{slug}" e data-platform-slug="{slug}" agora presentes na UI real.
     const platformRow = page
       .locator('[data-testid^="platform-row-"]')
       .or(page.locator("[data-platform-slug]"))
@@ -84,7 +84,7 @@ test.describe("Super Admin — platforms management", () => {
       (await platformRow.getAttribute("data-testid")) ??
       "";
 
-    // TODO: ajustar seletor — toggle visual da plataforma.
+    // Toggle tem data-testid="platform-toggle" na UI real.
     const toggle = platformRow
       .getByRole("switch")
       .or(platformRow.locator('[data-testid="platform-toggle"]'))
@@ -100,9 +100,7 @@ test.describe("Super Admin — platforms management", () => {
     await page.goto("/company/settings/social-accounts");
     await page.waitForLoadState("networkidle");
 
-    // TODO: ajustar seletor — a seção "Disponíveis" deve ter um data-testid
-    // próprio. Por ora verificamos que o slug da plataforma desabilitada não
-    // aparece em nenhuma parte da lista de "conectar".
+    // data-testid="available-platforms" e data-platform-slug="{slug}" agora presentes na UI real.
     const availableSection = page
       .locator('[data-testid="available-platforms"]')
       .or(page.getByRole("region", { name: /Disponíveis|Available/i }));
