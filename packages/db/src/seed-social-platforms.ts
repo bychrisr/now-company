@@ -23,6 +23,7 @@ export async function seedSocialPlatforms(db: ReturnType<typeof createDb>) {
         imageSpecs: sql`excluded.image_specs`,
         description: sql`excluded.description`,
         websiteUrl: sql`excluded.website_url`,
+        implementationStatus: sql`excluded.implementation_status`,
         updatedAt: new Date(),
       },
     });

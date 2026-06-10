@@ -508,10 +508,179 @@ Quando este débito for refinado em story pelo @sm/@po, os ACs mínimos devem se
 
 ---
 
+## Parte 6 — Referência de OAuth por Plataforma
+
+> Pesquisado em 2026-06-01. Atualizar conforme novas plataformas forem implementadas.
+
+### Tabela Comparativa
+
+| Plataforma | App Review Obrigatório | Custo Mínimo | Long-lived Token | Client Secret Expira |
+|---|---|---|---|---|
+| Instagram | Sim | Grátis | 60 dias | Não |
+| Facebook Pages | Sim + Business Verification | Grátis | Permanente (se long-lived user token) | Não |
+| YouTube | Verification + CASA (scopes sensíveis) | Grátis (quota 10k/dia) | Refresh não expira (verified) | Não |
+| TikTok | Sim (manual, dias–semanas) | Grátis | 365 dias (refresh) | Não |
+| LinkedIn | Sim (Marketing/Pages) | Grátis | 60 dias / 365 refresh | **12 meses** |
+| Twitter/X | Não (mas requer tier pago) | Pay-per-use (~$0.015/post) | Refresh com `offline.access` | Não |
+| Pinterest | Sim (Trial 1–3 dias úteis) | Grátis | 30 dias / 60 refresh | Não |
+| Threads | Sim | Grátis | 60 dias | Não |
+
+---
+
+### Instagram (via Meta for Developers)
+
+**Credenciais:** App ID, App Secret, Redirect URI (HTTPS)
+**Scopes:** `instagram_basic`, `instagram_content_publish`, `instagram_manage_comments`, `instagram_manage_insights`, `pages_show_list`, `pages_read_engagement`
+**Console:** https://developers.facebook.com/apps/
+
+**Passos:**
+1. Criar conta Meta Developer (requer Facebook verificado).
+2. Criar novo app → use case **"Business"**.
+3. Adicionar produtos: Instagram + Facebook Login.
+4. Configurar OAuth Redirect URI em Facebook Login → Settings.
+5. Copiar App ID + App Secret em Settings → Basic.
+6. Conectar conta Instagram **Business ou Creator** vinculada a uma Página do Facebook.
+7. Submeter para **App Review** os scopes sensíveis.
+
+**Atenção:** Instagram Basic Display API foi descontinuada (dez/2024) — usar Instagram Graph API. Sem App Review aprovado, só funciona com contas com role no app. Token curto: ~1h; long-lived: **60 dias** (renovável).
+
+---
+
+### Facebook Pages (via Meta for Developers)
+
+**Credenciais:** App ID, App Secret, Redirect URI (HTTPS)
+**Scopes:** `pages_manage_posts`, `pages_show_list`, `pages_read_engagement`, `pages_manage_metadata`
+**Console:** https://developers.facebook.com/apps/
+
+**Passos:**
+1. Mesmo app Meta do Instagram (pode compartilhar).
+2. Adicionar produto Facebook Login for Business.
+3. Configurar Redirect URI.
+4. Solicitar permissões via App Review com vídeo screencast + **Business Verification** (CNPJ).
+5. Trocar user token por **Page Access Token** via `/me/accounts`.
+6. Mudar app para modo Live após aprovação.
+
+**Atenção:** App Review + Business Verification obrigatórios. Processo pode levar **semanas**. Page Access Token pode ser permanente se derivado de long-lived user token.
+
+---
+
+### YouTube (via Google Cloud Console)
+
+**Credenciais:** Client ID, Client Secret, Authorized Redirect URIs
+**Scopes:** `youtube.upload`, `youtube.readonly`, `youtube.force-ssl`
+**Console:** https://console.cloud.google.com/apis/credentials
+
+**Passos:**
+1. Criar projeto no Google Cloud Console.
+2. Habilitar YouTube Data API v3 em APIs & Services → Library.
+3. Configurar OAuth consent screen (External + branding + scopes + test users).
+4. Em Credentials → "Create Credentials" → OAuth client ID → Web Application.
+5. Definir redirect URIs.
+6. Copiar Client ID + Client Secret.
+7. Para produção: submeter para **Google Verification** (scopes sensíveis podem exigir CASA security assessment: USD 4k–75k).
+
+**Atenção:** Modo Testing limitado a 100 usuários; refresh tokens expiram em 7 dias em testing. Quota padrão: 10.000 unidades/dia (upload = 1.600 unidades).
+
+---
+
+### TikTok (via TikTok for Developers)
+
+**Credenciais:** Client Key (App ID), Client Secret, Redirect URI (HTTPS, máx 512 chars, até 10 URIs)
+**Scopes:** `user.info.basic`, `user.info.profile`, `video.list`, `video.upload`, `video.publish`
+**Console:** https://developers.tiktok.com/apps
+
+**Passos:**
+1. Criar conta em developers.tiktok.com.
+2. Manage apps → Connect a new app.
+3. Preencher: nome, descrição, website, privacy policy, terms of service.
+4. Adicionar produtos: Login Kit + Content Posting API.
+5. Configurar Redirect URI.
+6. Solicitar scopes → fila de **manual review** (dias a semanas).
+7. Após aprovação, copiar Client Key + Client Secret.
+
+**Atenção:** Manual review obrigatória para Content Posting API. Sandbox disponível antes. Direct Post exige domínio de redirect verificado. Access tokens: 24h; refresh tokens: 365 dias.
+
+---
+
+### LinkedIn (via LinkedIn Developer Portal)
+
+**Credenciais:** Client ID, Client Secret, Authorized Redirect URLs
+**Scopes:** `openid`, `profile`, `email`, `w_member_social`, `w_organization_social`, `r_organization_social`
+**Console:** https://www.linkedin.com/developers/apps
+
+**Passos:**
+1. Developer Portal → Create App.
+2. Vincular a uma LinkedIn Company Page (obrigatório).
+3. Auth tab: copiar Client ID + Client Secret; configurar redirect URLs.
+4. Products tab: solicitar Sign In with LinkedIn, Share on LinkedIn, Marketing Developer Platform (se Ads).
+5. Aguardar aprovação de produtos sensíveis (form com use case detalhado).
+6. Verificar app via Page admin.
+
+**Atenção:** Client Secret **expira em 12 meses** (rotação obrigatória introduzida em 2024) — implementar rotação no backlog. Marketing Developer Platform requer formulário de uso. Access tokens: 60 dias; refresh: 365 dias.
+
+---
+
+### Twitter/X (via developer.x.com)
+
+**Credenciais:** Client ID, Client Secret (OAuth 2.0), Redirect URI
+**Scopes:** `tweet.read`, `tweet.write`, `users.read`, `offline.access`, `media.write`
+**Console:** https://developer.x.com/en/portal/dashboard
+
+**Passos:**
+1. Inscrever-se em tier pago (Free extinto para novos devs em fev/2026).
+2. Criar Project + App no portal.
+3. User authentication settings → habilitar OAuth 2.0.
+4. Configurar tipo de app (Web App), callback URLs, website.
+5. Definir permissions (Read+Write).
+6. Copiar Client ID + Client Secret (visíveis apenas uma vez).
+7. Implementar OAuth 2.0 com **PKCE** (padrão recomendado).
+
+**Atenção:** **Requer tier pago** (~$0.015 por post sem URL; $0.20 por post com URL; $0.005 por read). Basic ($200/mês) só para assinantes legados. Access tokens OAuth 2.0: 2h; refresh com `offline.access`.
+
+---
+
+### Pinterest (via Pinterest Developers)
+
+**Credenciais:** App ID (Client ID), App Secret Key, Redirect URI (HTTPS)
+**Scopes:** `boards:read`, `boards:write`, `pins:read`, `pins:write`, `user_accounts:read`
+**Console:** https://developers.pinterest.com/apps/
+
+**Passos:**
+1. Criar conta business no Pinterest.
+2. developers.pinterest.com → My apps → Connect app.
+3. Preencher: nome, descrição, website, privacy policy.
+4. Submeter pedido de **Trial Access** (aprovação em 1–3 dias úteis).
+5. Após aprovação: Manage → Configure → ver App ID + App secret key.
+6. Configurar Redirect URI.
+7. Para maior volume: solicitar Standard/Production Access.
+
+**Atenção:** App secret não fica visível enquanto pending. Trial Access com rate limits reduzidos. API v5 é a versão atual (v3 descontinuada). Access tokens: 30 dias; refresh: 60 dias.
+
+---
+
+### Threads (via Meta for Developers)
+
+**Credenciais:** App ID, App Secret, Redirect URI (HTTPS)
+**Scopes:** `threads_basic`, `threads_content_publish`, `threads_manage_insights`, `threads_manage_replies`, `threads_read_replies`
+**Console:** https://developers.facebook.com/apps/ (use case: "Access the Threads API")
+
+**Passos:**
+1. Criar app em Meta for Developers.
+2. Selecionar use case **"Access the Threads API"** durante criação.
+3. Adicionar produto Threads API.
+4. Configurar Redirect URI nas settings do Threads API.
+5. Solicitar scopes necessários.
+6. Implementar OAuth 2.0 (curta duração → long-lived 60d).
+7. Submeter para **App Review** para produção.
+
+**Atenção:** API pública disponível desde jun/2024. Usuário precisa ter conta Threads ativa (vinculada ao Instagram). Rate limits: 250 posts/24h por usuário. Short-lived token: 1h; long-lived: **60 dias** (renovável).
+
+---
+
 ## Referências
 
 - **Story de origem:** `docs/stories/1.7.company-social-accounts-ui.md`
 - **Schema:** `packages/db/src/schema/social_platforms.ts`, `company_secrets.ts`
 - **Secrets infra:** `server/src/secrets/local-encrypted-provider.ts`
-- **Routes afetadas:** `server/src/routes/social-accounts.ts:139-170`, `server/src/routes/oauth-callback.ts`
-- **UI afetada:** `ui/src/pages/InstanceSocialPlatforms.tsx` (verificar nome exato do arquivo)
+- **Routes afetadas:** `server/src/routes/social-accounts.ts`, `server/src/routes/oauth-callback.ts`
+- **UI afetada:** `ui/src/pages/InstancePlatformsAdmin.tsx`

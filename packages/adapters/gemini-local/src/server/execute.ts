@@ -308,8 +308,17 @@ export async function execute(ctx: AdapterExecutionContext): Promise<AdapterExec
 
   const extraArgs = (() => {
     const fromExtraArgs = asStringArray(config.extraArgs);
-    if (fromExtraArgs.length > 0) return fromExtraArgs;
-    return asStringArray(config.args);
+    const baseArgs = fromExtraArgs.length > 0 ? fromExtraArgs : asStringArray(config.args);
+    // Sanitization: Remove '-c' and its associated value if present, as Gemini CLI does not support it
+    const filtered: string[] = [];
+    for (let i = 0; i < baseArgs.length; i++) {
+      if (baseArgs[i] === "-c") {
+        i++; // skip the value
+        continue;
+      }
+      filtered.push(baseArgs[i]);
+    }
+    return filtered;
   })();
   let restoreRemoteWorkspace: (() => Promise<void>) | null = null;
   let remoteSkillsDir: string | null = null;

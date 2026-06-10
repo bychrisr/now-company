@@ -421,5 +421,29 @@
         "showTerminated": "Mostrar terminados"
       }
     }
+  },
+  "platforms": {
+    "health": {
+      "healthy": "Operacional",
+      "warning": "Atenção",
+      "error": "Não configurado"
+    },
+    "impl": {
+      "implemented": "Implementado",
+      "inProgress": "Em desenvolvimento",
+      "notImplemented": "Não implementado"
+    },
+    "oauthConfig": {
+      "title": "Configuração OAuth",
+      "appId": "App ID",
+      "appSecret": "App Secret",
+      "redirectUri": "Redirect URI",
+      "save": "Salvar configuração",
+      "clear": "Limpar configuração",
+      "helpLink": "Como obter estas credenciais",
+      "secretPlaceholder": "Novo App Secret (deixe em branco para manter o atual)",
+      "secretWarning": "Nunca compartilhe este valor",
+      "redirectUriHint": "Este URI deve ser idêntico ao cadastrado no console de desenvolvedor da plataforma"
+    }
   }
 }

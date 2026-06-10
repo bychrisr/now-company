@@ -209,13 +209,9 @@ describe("server adapter registry", () => {
         source: "adapter_default",
       }),
     ]);
-    await expect(listAdapterModelProfiles("gemini_local")).resolves.toEqual([
-      expect.objectContaining({
-        key: "cheap",
-        adapterConfig: expect.objectContaining({ model: "gemini-2.5-flash-lite" }),
-        source: "adapter_default",
-      }),
-    ]);
+    // gemini_local não declara profile 'cheap': o commit 9cd389d0 removeu o
+    // modelProfileDefaults por incompatibilidade do arg '-c' no Gemini CLI.
+    await expect(listAdapterModelProfiles("gemini_local")).resolves.toEqual([]);
     await expect(listAdapterModelProfiles("opencode_local")).resolves.toEqual([
       expect.objectContaining({
         key: "cheap",

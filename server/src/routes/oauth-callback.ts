@@ -6,7 +6,7 @@ import { logger } from "../middleware/logger.js";
 import { badRequest, unprocessable } from "../errors.js";
 import { secretService } from "../services/index.js";
 import { getConfiguredSecretProvider } from "../secrets/configured-provider.js";
-import { loadConfig } from "../config.js";
+import { decryptOauthSecret } from "../secrets/platform-oauth-utils.js";
 import { validateAndConsumeState } from "./social-accounts.js";
 import { ensureMetricsSyncRoutine } from "../services/social-metrics-sync-scheduler.js";
 
@@ -137,50 +137,46 @@ export function oauthCallbackRoutes(db: Db) {
       throw badRequest("Invalid or expired state token");
     }
 
-    if (platformSlug !== "instagram") {
-      throw unprocessable(`OAuth callback for platform '${platformSlug}' not yet implemented`);
-    }
-
-    const config = loadConfig();
-    if (!config.instagramAppId || !config.instagramAppSecret || !config.instagramRedirectUri) {
-      throw unprocessable("Instagram OAuth not configured on server");
-    }
-
-    // Troca o code pelo short-lived access_token (válido por 1h)
-    const shortLivedTokenData = await exchangeInstagramCode(
-      code,
-      config.instagramAppId,
-      config.instagramAppSecret,
-      config.instagramRedirectUri,
-    );
-
-    // Troca o short-lived (1h) pelo long-lived (60d) — necessário para que a
-    // Routine de sync (Story 1.6) possa renovar via /refresh_access_token.
-    // Short-lived tokens não são refresháveis.
-    const longLivedTokenData = await exchangeForLongLivedToken(
-      shortLivedTokenData.access_token,
-      config.instagramAppSecret,
-    );
-
-    // A partir daqui usamos APENAS o long-lived — é o que será persistido e
-    // o que terá vida útil suficiente para sync periódica.
-    const accessToken = longLivedTokenData.access_token;
-
-    // Busca perfil do usuário na plataforma
-    const profile = await fetchInstagramMe(accessToken);
-
-    const platformAccountId = profile.id;
-    const handle = profile.username ?? profile.name ?? platformAccountId;
-
-    // Busca o platform_id pelo slug
+    // Busca credenciais OAuth no banco — não depende mais de env vars
     const [platform] = await db
-      .select({ id: socialPlatforms.id })
+      .select()
       .from(socialPlatforms)
       .where(eq(socialPlatforms.slug, platformSlug));
 
     if (!platform) {
       throw unprocessable(`Platform '${platformSlug}' not found in catalog`);
     }
+    if (!platform.oauthAppId || !platform.oauthAppSecretEnc || !platform.oauthRedirectUri) {
+      throw unprocessable(
+        `Platform '${platformSlug}' OAuth not configured — Super Admin must set App ID, App Secret and Redirect URI`,
+      );
+    }
+    if (platform.implementationStatus === "not_implemented") {
+      throw unprocessable(`OAuth callback for platform '${platformSlug}' not yet implemented`);
+    }
+
+    const appSecret = decryptOauthSecret(platform.oauthAppSecretEnc);
+
+    // Troca o code pelo short-lived access_token (válido por 1h)
+    const shortLivedTokenData = await exchangeInstagramCode(
+      code,
+      platform.oauthAppId,
+      appSecret,
+      platform.oauthRedirectUri,
+    );
+
+    // Troca o short-lived (1h) pelo long-lived (60d) — short-lived não é refreshável;
+    // a Routine de sync (Story 1.6) precisa renovar via /refresh_access_token.
+    const longLivedTokenData = await exchangeForLongLivedToken(
+      shortLivedTokenData.access_token,
+      appSecret,
+    );
+
+    const accessToken = longLivedTokenData.access_token;
+
+    const profile = await fetchInstagramMe(accessToken);
+    const platformAccountId = profile.id;
+    const handle = profile.username ?? profile.name ?? platformAccountId;
 
     // Chave do secret: determinística — upsert seguro
     const secretKey = `oauth_${platformSlug}_${platformAccountId}`;

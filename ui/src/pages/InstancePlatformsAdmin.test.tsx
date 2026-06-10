@@ -6,6 +6,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { InstancePlatformsAdmin } from "./InstancePlatformsAdmin";
 
+import { TooltipProvider } from "@/components/ui/tooltip";
+
 const listPlatformsMock = vi.hoisted(() => vi.fn());
 const patchPlatformMock = vi.hoisted(() => vi.fn());
 const getCurrentBoardAccessMock = vi.hoisted(() => vi.fn());
@@ -118,7 +120,9 @@ describe("InstancePlatformsAdmin", () => {
     act(() => {
       createRoot(container).render(
         <QueryClientProvider client={qc}>
-          <InstancePlatformsAdmin />
+          <TooltipProvider>
+            <InstancePlatformsAdmin />
+          </TooltipProvider>
         </QueryClientProvider>
       );
     });
@@ -172,7 +176,7 @@ describe("InstancePlatformsAdmin", () => {
       Object.defineProperty(input, "value", { writable: true, value: "instagram" });
     });
     await flushReact(1);
-    const rows = container.querySelectorAll("tbody tr");
+    const rows = container.querySelectorAll("[data-platform-slug]");
     expect(rows.length).toBeGreaterThanOrEqual(1);
   });
 });

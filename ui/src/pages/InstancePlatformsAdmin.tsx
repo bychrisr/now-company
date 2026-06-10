@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Share2, Globe, Search, RefreshCw, AlertTriangle, ArrowUpDown, Check, Save } from "lucide-react";
+import { Share2, Globe, Search, RefreshCw, AlertTriangle, Check } from "lucide-react";
 import { socialPlatformsApi, type SocialPlatform } from "@/api/socialPlatforms";
 import { accessApi } from "@/api/access";
 import { queryKeys } from "@/lib/queryKeys";
@@ -14,6 +14,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { ToggleSwitch } from "@/components/ui/toggle-switch";
 import { Navigate } from "@/lib/router";
 import { cn } from "@/lib/utils";
+import { PlatformStatusDot } from "@/components/PlatformStatusDot";
+import { PlatformImplementationBadge } from "@/components/PlatformImplementationBadge";
+import { PlatformOAuthConfigCard } from "@/components/PlatformOAuthConfigCard";
 
 export function InstancePlatformsAdmin() {
   const { selectedCompany } = useCompany();
@@ -195,118 +198,108 @@ export function InstancePlatformsAdmin() {
           </CardContent>
         </Card>
       ) : (
-        <div className="border rounded-lg overflow-hidden bg-card">
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm text-left border-collapse">
-              <thead>
-                <tr className="border-b bg-muted/30">
-                  <th className="px-6 py-3 font-semibold text-xs text-muted-foreground uppercase tracking-wider">
-                    Platform
-                  </th>
-                  <th className="px-6 py-3 font-semibold text-xs text-muted-foreground uppercase tracking-wider hidden sm:table-cell">
-                    Category
-                  </th>
-                  <th className="px-6 py-3 font-semibold text-xs text-muted-foreground uppercase tracking-wider text-center">
-                    Status
-                  </th>
-                  <th className="px-6 py-3 font-semibold text-xs text-muted-foreground uppercase tracking-wider text-right w-40">
-                    Sort Order
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y">
-                {filteredPlatforms.map((platform) => {
-                  const currentSortOrder =
-                    editingSortOrders[platform.id] !== undefined
-                      ? editingSortOrders[platform.id]
-                      : platform.sortOrder;
-                  const isModified =
-                    editingSortOrders[platform.id] !== undefined &&
-                    editingSortOrders[platform.id] !== platform.sortOrder;
-                  const isMutating = updatePlatformMutation.isPending && updatePlatformMutation.variables?.id === platform.id;
+        <div className="space-y-2">
+          {filteredPlatforms.map((platform) => {
+            const currentSortOrder =
+              editingSortOrders[platform.id] !== undefined
+                ? editingSortOrders[platform.id]
+                : platform.sortOrder;
+            const isModified =
+              editingSortOrders[platform.id] !== undefined &&
+              editingSortOrders[platform.id] !== platform.sortOrder;
+            const isMutating =
+              updatePlatformMutation.isPending &&
+              updatePlatformMutation.variables?.id === platform.id;
 
-                  return (
-                    <tr
-                      key={platform.id}
-                      className={cn(
-                        "hover:bg-muted/10 transition-colors",
-                        platform.status === "disabled" && "opacity-75"
+            return (
+              <div
+                key={platform.id}
+                data-testid={`platform-row-${platform.slug}`}
+                data-platform-slug={platform.slug}
+                className={cn(
+                  "rounded-lg border bg-card px-4 py-3 transition-colors",
+                  platform.status === "disabled" && "opacity-75",
+                )}
+              >
+                {/* Linha principal */}
+                <div className="flex flex-wrap items-center gap-3">
+                  {/* Ícone + nome + badges */}
+                  <div className="flex items-center gap-2 min-w-0 flex-1">
+                    {platform.iconUrl ? (
+                      <img
+                        src={platform.iconUrl}
+                        alt={platform.name}
+                        className="h-6 w-6 object-contain rounded shrink-0"
+                      />
+                    ) : (
+                      <div className="h-6 w-6 bg-muted rounded flex items-center justify-center shrink-0">
+                        <Share2 className="h-3.5 w-3.5 text-muted-foreground" />
+                      </div>
+                    )}
+                    <PlatformStatusDot status={platform.healthStatus} />
+                    <span className="font-medium text-foreground">{platform.name}</span>
+                    <PlatformImplementationBadge status={platform.implementationStatus} />
+                    <Badge variant="secondary" className="capitalize text-xs hidden sm:inline-flex">
+                      {platform.category}
+                    </Badge>
+                  </div>
+
+                  {/* Controles */}
+                  <div className="flex items-center gap-3 shrink-0">
+                    {/* Sort order */}
+                    <div className="flex items-center gap-1.5">
+                      <Input
+                        type="number"
+                        value={currentSortOrder}
+                        onChange={(e) => handleSortOrderChange(platform.id, e.target.value)}
+                        className="w-16 text-right h-8 text-xs"
+                        disabled={isMutating}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") handleSaveSortOrder(platform);
+                        }}
+                      />
+                      {isModified && (
+                        <Button
+                          size="icon-sm"
+                          variant="outline"
+                          className="h-8 w-8 text-green-600 border-green-400 hover:bg-green-50"
+                          onClick={() => handleSaveSortOrder(platform)}
+                          disabled={isMutating}
+                          title="Save sort order"
+                        >
+                          <Check className="h-4 w-4" />
+                        </Button>
                       )}
-                    >
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-3">
-                          {platform.iconUrl ? (
-                            <img src={platform.iconUrl} alt={platform.name} className="h-6 w-6 object-contain rounded" />
-                          ) : (
-                            <div className="h-6 w-6 bg-muted rounded flex items-center justify-center">
-                              <Share2 className="h-3.5 w-3.5 text-muted-foreground" />
-                            </div>
-                          )}
-                          <div>
-                            <span className="font-medium text-foreground block">{platform.name}</span>
-                            <span className="text-xs font-mono text-muted-foreground">{platform.slug}</span>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 hidden sm:table-cell">
-                        <Badge variant="secondary" className="capitalize">
-                          {platform.category}
-                        </Badge>
-                      </td>
-                      <td className="px-6 py-4 text-center">
-                        <div className="flex items-center justify-center gap-2">
-                          <ToggleSwitch
-                            checked={platform.status === "enabled"}
-                            onCheckedChange={(checked) => handleStatusToggle(platform, checked)}
-                            disabled={isMutating}
-                          />
-                          <span
-                            className={cn(
-                              "text-xs font-medium min-w-16 text-left",
-                              platform.status === "enabled" ? "text-green-600" : "text-muted-foreground"
-                            )}
-                          >
-                            {platform.status === "enabled" ? "Enabled" : "Disabled"}
-                          </span>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 text-right">
-                        <div className="flex items-center justify-end gap-2">
-                          <Input
-                            type="number"
-                            value={currentSortOrder}
-                            onChange={(e) => handleSortOrderChange(platform.id, e.target.value)}
-                            className="w-20 text-right h-8"
-                            disabled={isMutating}
-                            onKeyDown={(e) => {
-                              if (e.key === "Enter") {
-                                handleSaveSortOrder(platform);
-                              }
-                            }}
-                          />
-                          {isModified && (
-                            <Button
-                              size="icon-sm"
-                              variant="outline"
-                              className="h-8 w-8 text-green-600 border-green-400 hover:bg-green-50"
-                              onClick={() => handleSaveSortOrder(platform)}
-                              disabled={isMutating}
-                              title="Save sort order"
-                            >
-                              <Check className="h-4 w-4" />
-                            </Button>
-                          )}
-                          {isMutating && (
-                            <RefreshCw className="h-4 w-4 animate-spin text-muted-foreground shrink-0 ml-1" />
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
+                    </div>
+
+                    {/* Enable/disable toggle */}
+                    <div className="flex items-center gap-1.5">
+                      <ToggleSwitch
+                        checked={platform.status === "enabled"}
+                        onCheckedChange={(checked) => handleStatusToggle(platform, checked)}
+                        disabled={isMutating}
+                        data-testid="platform-toggle"
+                      />
+                      <span
+                        className={cn(
+                          "text-xs font-medium w-14",
+                          platform.status === "enabled" ? "text-green-600" : "text-muted-foreground",
+                        )}
+                      >
+                        {platform.status === "enabled" ? "Enabled" : "Disabled"}
+                      </span>
+                      {isMutating && (
+                        <RefreshCw className="h-3.5 w-3.5 animate-spin text-muted-foreground" />
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Card colapsável de configuração OAuth */}
+                <PlatformOAuthConfigCard platform={platform} />
+              </div>
+            );
+          })}
         </div>
       )}
     </div>
