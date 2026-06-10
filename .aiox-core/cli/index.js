@@ -29,7 +29,7 @@ const packageJsonPath = path.join(__dirname, '..', '..', 'package.json');
 let packageVersion = '0.0.0';
 try {
   const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
-  packageVersion = packageJson.version;
+  packageVersion = packageJson.version || '0.0.0';
 } catch (error) {
   // Fallback version if package.json not found
 }
