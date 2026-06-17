@@ -28,7 +28,7 @@
 | D02 | `issues` | `assignee_user_id` | `text` sem FK → `user.id` — usuário deletado permanece referenciado | 🔴 Alto | Baixo | P1 |
 | D03 | `issues` | `created_by_user_id` | `text` sem FK → `user.id` | 🟡 Médio | Baixo | P2 |
 | D04 | `approvals` | `decided_by_user_id` | `text` sem FK → `user.id` — decisões de governança sem rastreabilidade garantida | 🔴 Alto | Baixo | ✅ Resolvido |
-| D05 | `companies` | `feedback_data_sharing_consent_by_user_id` | `text` sem FK → `user.id` — dado de consentimento LGPD sem integridade referencial | 🔴 Alto | Baixo | P2 |
+| D05 | `companies` | `feedback_data_sharing_consent_by_user_id` | `text` sem FK → `user.id` — dado de consentimento LGPD sem integridade referencial | 🔴 Alto | Baixo | ✅ Resolvido |
 | D06 | `company_user_sidebar_preferences` | `user_id` | `text` sem FK → `user.id` | 🟢 Baixo | Baixo | P3 |
 | D07 | `user_sidebar_preferences` | `user_id` | `text` sem FK → `user.id` | 🟢 Baixo | Baixo | P3 |
 | D08 | `invites` | `invited_by_user_id` | `text` sem FK → `user.id` | 🟡 Médio | Baixo | P2 |
@@ -486,7 +486,7 @@ Os 5 débitos com **menor esforço e maior impacto** para resolver primeiro:
 0100 → vault_notes                            (Vault Obsidian — fase 1)
 0101 → vault_chunks + pgvector                (Vault Obsidian — fase 2 RAG)
 0102 → vault_links                            (Vault Obsidian — fase 3 grafo)
-0103 → FK crítica D05 (companies.feedback_data_sharing_consent_by_user_id → user.id)   (P2 — compliance LGPD)
+0103 → FK crítica D05 (companies.feedback_data_sharing_consent_by_user_id → user.id)   (✅ Resolvido em migration 0101 — Story 4.4)
 0104 → índices compound projects + goals      (P2 — performance)
 ```
 

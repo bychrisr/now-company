@@ -708,6 +708,13 @@
       "when": 1781713647972,
       "tag": "0100_handy_arclight",
       "breakpoints": true
+    },
+    {
+      "idx": 101,
+      "version": "7",
+      "when": 1781717175435,
+      "tag": "0101_yellow_callisto",
+      "breakpoints": true
     }
   ]
 }

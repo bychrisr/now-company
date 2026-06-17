@@ -1,20 +1,18 @@
 status:
-  branch: feat/translations
+  branch: docs/epic-004-005-tech-debt-stories
   modifiedFiles:
-    - ui/src/components/Sidebar.tsx
-    - ui/src/i18n/locales/en.json
-    - ui/src/i18n/locales/pt-BR.json
-    - ui/src/pages/Dashboard.tsx
-  modifiedFilesTotalCount: 4
+    - .aiox/project-status.yaml
+    - .aiox/sessions/recent.json
+  modifiedFilesTotalCount: 2
   recentCommits:
+    - 'docs(db): resolve D35 audit debt and update story 4.3 checklist'
     - >-
-      feat(aiox): integrate Synkra AIOX and fix adapter parsing/ui references
-      (#1)
-    - '[codex] Add document annotations and comments (#6733)'
-  currentEpic: null
-  currentStory: null
-  lastUpdate: '2026-05-27T04:56:17.350Z'
+      feat(db): generate migration 0100 to enforce not null verification
+      timestamps
+  currentEpic: EPIC-001 Platform Foundation
+  currentStory: 1.8.e2e-and-isolation-tests
+  lastUpdate: '2026-06-17T16:43:00.578Z'
   isGitRepo: true
-timestamp: 1779857777352
+timestamp: 1781714580579
 ttl: 60
-gitFingerprint: 1779857614580.6653:1779857552332.3599
+gitFingerprint: 1781703101077.9883:1781714420591.5889
