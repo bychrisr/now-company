@@ -1,0 +1,1 @@
+ALTER TABLE "companies" ADD CONSTRAINT "companies_feedback_data_sharing_consent_by_user_id_user_id_fk" FOREIGN KEY ("feedback_data_sharing_consent_by_user_id") REFERENCES "public"."user"("id") ON DELETE set null ON UPDATE no action;

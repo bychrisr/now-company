@@ -7,6 +7,7 @@ import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "vitest
 import { writePaperclipSkillSyncPreference } from "@paperclipai/adapter-utils/server-utils";
 import {
   agents,
+  authUsers,
   companies,
   companySkills,
   costEvents,
@@ -39,6 +40,16 @@ describe("feedbackService.saveIssueVote", () => {
     db = createDb(started.connectionString);
     svc = feedbackService(db);
     tempDb = started;
+
+    // Semeia os usuários referenciados pelos votos. A FK companies.feedback_data_sharing_consent_by_user_id
+    // -> user.id (D05/Story 4.4) exige que o usuário que consente exista antes de gravar o consentimento.
+    await db
+      .insert(authUsers)
+      .values([
+        { id: "user-1", name: "Test User 1", email: "user-1@example.com", createdAt: new Date(), updatedAt: new Date() },
+        { id: "user-2", name: "Test User 2", email: "user-2@example.com", createdAt: new Date(), updatedAt: new Date() },
+      ])
+      .onConflictDoNothing();
   }, 120_000);
 
   afterEach(async () => {
