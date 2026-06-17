@@ -88,7 +88,7 @@
 
 | ID | Tabela | Débito | Severidade | Esforço | Prioridade |
 |----|--------|--------|------------|---------|------------|
-| D35 | `verification` | `created_at` e `updated_at` são **nullable** — inconsistente com todos os outros `created_at NOT NULL` do schema | 🟡 Médio | Baixo | P2 |
+| D35 | `verification` | `created_at` e `updated_at` são **nullable** — inconsistente com todos os outros `created_at NOT NULL` do schema | 🟡 Médio | Baixo | ✅ Resolvido |
 | D36 | `account` | Tokens OAuth (`access_token`, `refresh_token`, `id_token`) em plaintext — sem constraint ou flag de criptografia no schema | 🔴 Alto | Alto | P1 |
 | D37 | `plugins` | `installed_at` ao invés de `created_at` — quebra padrão de naming; dificulta queries genéricas e auditoria | 🟡 Médio | Baixo | P2 |
 | D38 | `cloud_upstream_connections` | Armazena chaves privadas e tokens em plaintext — sem indicação de criptografia no schema (comentário ou campo `is_encrypted`) | 🔴 Alto | Alto | P1 |
