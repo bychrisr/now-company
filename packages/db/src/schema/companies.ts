@@ -1,4 +1,7 @@
 import { pgTable, uuid, text, integer, timestamp, boolean, uniqueIndex } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
+// Importa authUsers para estabelecer a relação de propriedade da empresa (D30)
+import { authUsers } from "./auth.js";
 
 export const companies = pgTable(
   "companies",
@@ -28,8 +31,16 @@ export const companies = pgTable(
     brandColor: text("brand_color"),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+    // Coluna 'kind' indica se a empresa é do tipo pessoal ('personal') ou corporativa ('business') (D29)
+    kind: text("kind").notNull().default("business"),
+    // Coluna 'owner_user_id' guarda a referência do usuário proprietário da empresa, necessário para o modo pessoal (D30)
+    ownerUserId: text("owner_user_id").references(() => authUsers.id, { onDelete: "set null" }),
   },
   (table) => ({
     issuePrefixUniqueIdx: uniqueIndex("companies_issue_prefix_idx").on(table.issuePrefix),
+    // Índice parcial único para garantir que um usuário seja dono de no máximo uma empresa pessoal (modo ORION/Personal)
+    personalOwnerUniqueIdx: uniqueIndex("companies_personal_owner_idx")
+      .on(table.ownerUserId)
+      .where(sql`kind = 'personal'`),
   }),
 );

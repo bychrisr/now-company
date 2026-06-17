@@ -687,6 +687,13 @@
       "when": 1780343936055,
       "tag": "0097_serious_inhumans",
       "breakpoints": true
+    },
+    {
+      "idx": 98,
+      "version": "7",
+      "when": 1781704755316,
+      "tag": "0098_daily_vanisher",
+      "breakpoints": true
     }
   ]
 }

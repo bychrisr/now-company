@@ -72,8 +72,8 @@
 
 | ID | Tabela | Coluna | Débito | Severidade | Esforço | Prioridade |
 |----|--------|--------|--------|------------|---------|------------|
-| D29 | `companies` | `kind` | Discriminador `personal`/`business` ausente — impossível distinguir company pessoal de workspace de time | 🔴 Alto | Baixo | **P0** |
-| D30 | `companies` | `owner_user_id` | FK para `user.id` ausente — companies pessoais precisam de dono explícito para controle de acesso e billing | 🔴 Alto | Baixo | **P0** |
+| D29 | `companies` | `kind` | Discriminador `personal`/`business` ausente — impossível distinguir company pessoal de workspace de time | 🔴 Alto | Baixo | ✅ Resolvido |
+| D30 | `companies` | `owner_user_id` | FK para `user.id` ausente — companies pessoais precisam de dono explícito para controle de acesso e billing | 🔴 Alto | Baixo | ✅ Resolvido |
 
 ### 1.6 Índices ausentes em colunas de alta frequência
 
