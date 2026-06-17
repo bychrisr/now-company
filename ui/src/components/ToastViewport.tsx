@@ -91,7 +91,7 @@ export function ToastViewport() {
       aria-atomic="false"
       className="pointer-events-none fixed bottom-3 left-3 z-[120] w-full max-w-sm px-1"
     >
-      <ol className="flex w-full flex-col-reverse gap-2">
+      <ol role="status" className="flex w-full flex-col-reverse gap-2">
         {toasts.map((toast) => (
           <AnimatedToast
             key={toast.id}

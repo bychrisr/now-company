@@ -14,6 +14,7 @@ import { MembershipAction } from "../components/MembershipAction";
 import { agentStatusDot, agentStatusDotDefault } from "../lib/status-colors";
 import { EntityRow } from "../components/EntityRow";
 import { EmptyState } from "../components/EmptyState";
+import { ErrorState } from "../components/ErrorState";
 import { PageSkeleton } from "../components/PageSkeleton";
 import { relativeTime, cn, agentRouteRef, agentUrl } from "../lib/utils";
 import { PageTabBar } from "../components/PageTabBar";
@@ -83,7 +84,7 @@ export function Agents() {
   const [showTerminated, setShowTerminated] = useState(false);
   const [filtersOpen, setFiltersOpen] = useState(false);
 
-  const { data: agents, isLoading, error } = useQuery({
+  const { data: agents, isLoading, error, refetch } = useQuery({
     queryKey: queryKeys.agents.list(selectedCompanyId!),
     queryFn: () => agentsApi.list(selectedCompanyId!),
     enabled: !!selectedCompanyId,
@@ -220,7 +221,7 @@ export function Agents() {
         <p className="text-xs text-muted-foreground">{t("pages.agents.agentCount", { count: filtered.length })}</p>
       )}
 
-      {error && <p className="text-sm text-destructive">{error.message}</p>}
+      {error && <ErrorState message={error.message} retry={refetch} />}
 
       {agents && agents.length === 0 && (
         <EmptyState
