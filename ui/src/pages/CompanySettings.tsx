@@ -180,9 +180,9 @@ export function CompanySettings() {
 
       {/* General */}
       <div className="space-y-4">
-        <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+        <h2 className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
           {t("pages.companySettings.sections.general", "General")}
-        </div>
+        </h2>
         <div className="space-y-3 rounded-md border border-border px-4 py-4">
           <Field label={t("pages.companySettings.general.name.label", "Company name")} hint={t("pages.companySettings.general.name.hint", "The display name for your company.")}>
             <input
@@ -209,9 +209,9 @@ export function CompanySettings() {
 
       {/* Appearance */}
       <div className="space-y-4">
-        <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+        <h2 className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
           {t("pages.companySettings.sections.appearance", "Appearance")}
-        </div>
+        </h2>
         <div className="space-y-3 rounded-md border border-border px-4 py-4">
           <div className="flex items-start gap-4">
             <div className="shrink-0">
@@ -353,9 +353,9 @@ export function CompanySettings() {
 
       {/* Hiring */}
       <div className="space-y-4" data-testid="company-settings-team-section">
-        <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+        <h2 className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
           {t("pages.companySettings.sections.hiring", "Hiring")}
-        </div>
+        </h2>
         <div className="rounded-md border border-border px-4 py-3">
           <ToggleField
             label={t("pages.companySettings.hiring.approval.label", "Require board approval for new hires")}
@@ -369,9 +369,9 @@ export function CompanySettings() {
 
       {/* Import / Export */}
       <div className="space-y-4">
-        <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+        <h2 className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
           {t("pages.companySettings.sections.packages", "Company Packages")}
-        </div>
+        </h2>
         <div className="rounded-md border border-border px-4 py-4">
           <p className="text-sm text-muted-foreground">
             <Trans i18nKey="pages.companySettings.packages.description">
@@ -406,9 +406,9 @@ export function CompanySettings() {
 
       {/* Danger Zone */}
       <div className="space-y-4">
-        <div className="text-xs font-medium text-destructive uppercase tracking-wide">
+        <h2 className="text-xs font-medium text-destructive uppercase tracking-wide">
           {t("pages.companySettings.sections.dangerZone", "Danger Zone")}
-        </div>
+        </h2>
         <div className="space-y-3 rounded-md border border-destructive/40 bg-destructive/5 px-4 py-4">
           <p className="text-sm text-muted-foreground">
             {t("pages.companySettings.dangerZone.archive.description", "Archive this company to hide it from the sidebar. This persists in the database.")}
