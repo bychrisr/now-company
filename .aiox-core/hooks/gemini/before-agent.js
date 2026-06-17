@@ -1,0 +1,1 @@
+../../../.gemini/hooks/before-agent.cjs

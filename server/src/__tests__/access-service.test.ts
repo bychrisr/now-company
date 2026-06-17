@@ -3,6 +3,7 @@ import { and, eq, sql } from "drizzle-orm";
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
 import {
   agents,
+  authUsers,
   companies,
   companyMemberships,
   createDb,
@@ -62,6 +63,7 @@ describeEmbeddedPostgres("access service", () => {
     await db.delete(agents);
     await db.delete(companyMemberships);
     await db.delete(companies);
+    await db.delete(authUsers);
   });
 
   afterAll(async () => {
@@ -216,6 +218,13 @@ describeEmbeddedPostgres("access service", () => {
       })
       .returning()
       .then((rows) => rows[0]!);
+    await db.insert(authUsers).values({
+      id: operator.principalId,
+      name: "Test Operator",
+      email: `${operator.principalId}@example.com`,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
     await db.insert(instanceUserRoles).values({
       userId: operator.principalId,
       role: "instance_admin",

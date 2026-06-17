@@ -1,6 +1,7 @@
 import { pgTable, uuid, text, timestamp, jsonb, index } from "drizzle-orm/pg-core";
 import { companies } from "./companies.js";
 import { agents } from "./agents.js";
+import { authUsers } from "./auth.js";
 
 export const approvals = pgTable(
   "approvals",
@@ -9,11 +10,21 @@ export const approvals = pgTable(
     companyId: uuid("company_id").notNull().references(() => companies.id),
     type: text("type").notNull(),
     requestedByAgentId: uuid("requested_by_agent_id").references(() => agents.id),
-    requestedByUserId: text("requested_by_user_id"),
+    // Decisão técnica: Chave estrangeira referenciando a tabela de usuários (authUsers.id)
+    // com onDelete "set null" para que o registro histórico de quem solicitou a aprovação
+    // não seja excluído se o usuário correspondente for removido.
+    requestedByUserId: text("requested_by_user_id").references(() => authUsers.id, {
+      onDelete: "set null",
+    }),
     status: text("status").notNull().default("pending"),
     payload: jsonb("payload").$type<Record<string, unknown>>().notNull(),
     decisionNote: text("decision_note"),
-    decidedByUserId: text("decided_by_user_id"),
+    // Decisão técnica: Chave estrangeira referenciando a tabela de usuários (authUsers.id)
+    // com onDelete "set null" para preservar a integridade referencial mantendo a aprovação
+    // se o usuário que a decidiu for apagado.
+    decidedByUserId: text("decided_by_user_id").references(() => authUsers.id, {
+      onDelete: "set null",
+    }),
     decidedAt: timestamp("decided_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),

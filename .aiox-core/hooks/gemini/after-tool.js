@@ -1,0 +1,1 @@
+../../../.gemini/hooks/after-tool.cjs

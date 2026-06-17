@@ -1,0 +1,40 @@
+schema: 1
+story: '4.3'
+story_title: 'Anomalias de Nullable + Audit Trail (Migration 0100)'
+gate: PASS
+status_reason: 'Implementação verificada. authVerifications.createdAt e updatedAt agora NOT NULL DEFAULT now() em schema e migration. Zero NULLs confirmados pré-migration. DB-AUDIT D35 corretamente resolvido.'
+reviewer: 'Quinn (Test Architect)'
+updated: '2026-06-17T00:00:00Z'
+
+top_issues: []
+waiver: { active: false }
+
+quality_score: 98
+expires: '2026-07-01T00:00:00Z'
+
+evidence:
+  tests_reviewed: { count: 0 }
+  risks_identified: { count: 0 }
+  trace:
+    ac_covered: [1, 2, 3, 4, 5, 6, 7, 8, 9]
+    ac_gaps: []
+
+nfr_validation:
+  security:
+    status: PASS
+    notes: 'Tokens de verificação de email sem timestamp de criação não podem mais entrar no banco'
+  performance:
+    status: PASS
+    notes: 'ALTER COLUMN SET NOT NULL com zero NULLs existentes é operação instantânea no Postgres (apenas catalog update, sem reescrita de tabela)'
+  reliability:
+    status: PASS
+    notes: 'Sequência SET DEFAULT → SET NOT NULL na migration garante que rows futuras com DEFAULT sejam seguras mesmo em ambientes sem backfill'
+  maintainability:
+    status: PASS
+    notes: 'verification agora alinhada com os 96 outros timestamps NOT NULL do schema — anomalia eliminada'
+
+recommendations:
+  immediate: []
+  future:
+    - action: 'Documentar D20-D24 (heartbeat_run_events, cost_events etc.) como exceções intencionais (append-only/imutáveis) no schema — evitar investigações futuras'
+      refs: ['packages/db/src/schema/heartbeat_run_events.ts', 'docs/db/DB-AUDIT.md']

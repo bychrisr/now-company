@@ -1,10 +1,16 @@
 import { pgTable, uuid, text, timestamp, uniqueIndex, index } from "drizzle-orm/pg-core";
+import { authUsers } from "./auth.js";
 
 export const instanceUserRoles = pgTable(
   "instance_user_roles",
   {
     id: uuid("id").primaryKey().defaultRandom(),
-    userId: text("user_id").notNull(),
+    // Decisão técnica: Chave estrangeira referenciando a tabela de usuários (authUsers.id)
+    // com onDelete "cascade" pois o papel do usuário na instância não deve persistir
+    // se o usuário correspondente for removido.
+    userId: text("user_id")
+      .notNull()
+      .references(() => authUsers.id, { onDelete: "cascade" }),
     role: text("role").notNull().default("instance_admin"),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),

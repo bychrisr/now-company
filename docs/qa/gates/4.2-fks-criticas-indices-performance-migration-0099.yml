@@ -1,0 +1,53 @@
+schema: 1
+story: '4.2'
+story_title: 'FKs Críticas + Índices de Performance (Migration 0099)'
+gate: CONCERNS
+status_reason: 'FKs e índices implementados corretamente. D05 incorretamente marcado como resolvido em DB-AUDIT.md sem FK implementada — registro de compliance LGPD incorreto. Correção aplicada pelo @dev (commit 8e864f31).'
+reviewer: 'Quinn (Test Architect)'
+updated: '2026-06-17T00:00:00Z'
+
+top_issues:
+  - severity: medium
+    category: docs
+    description: 'D05 (companies.feedback_data_sharing_consent_by_user_id) marcado como ✅ Resolvido em DB-AUDIT.md sem FK implementada. Campo LGPD com registro de compliance incorreto. Raiz: conflito AC#13 vs Dev Notes Out of scope não escalado ao @po.'
+    recommendation: 'Status D05 revertido para pendente em DB-AUDIT.md (commit 8e864f31 por @dev). Abrir story separada para implementar a FK em sprint futuro.'
+    suggested_owner: po
+  - severity: low
+    category: docs
+    description: 'Linha de roadmap no DB-AUDIT.md agrupava D01/D04/D05/D14 como resolvidos na 0099 — stale após resolução parcial.'
+    recommendation: 'Corrigido pelo @dev no mesmo commit.'
+    suggested_owner: dev
+
+waiver: { active: false }
+
+quality_score: 75
+expires: '2026-07-01T00:00:00Z'
+
+evidence:
+  tests_reviewed: { count: 0 }
+  risks_identified: { count: 1 }
+  trace:
+    ac_covered: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+    ac_gaps: [13]
+
+nfr_validation:
+  security:
+    status: PASS
+    notes: 'ON DELETE CASCADE em instance_user_roles (role sem usuário é órfã perigosa). ON DELETE SET NULL em approvals e agent_runtime_state (histórico preservado).'
+  performance:
+    status: PASS
+    notes: 'Índices compound (company_id, status) em projects e goals eliminam seq scans nas queries mais frequentes do painel. UNIQUE INDEX em user.email previne race condition.'
+  reliability:
+    status: PASS
+    notes: 'Orphan checks executados antes de cada FK com resultado zero. Migration transacional.'
+  maintainability:
+    status: CONCERNS
+    notes: 'AC#13 incluía D05 mas Dev Notes documentavam D05 como out of scope — inconsistência não escalada ao @po para correção do AC. Correção aplicada em DB-AUDIT.md post-review.'
+
+recommendations:
+  immediate:
+    - action: 'Criar story para implementar FK de D05 (companies.feedback_data_sharing_consent_by_user_id → user.id) — dado de consentimento LGPD sem integridade referencial'
+      refs: ['packages/db/src/schema/companies.ts', 'docs/db/DB-AUDIT.md']
+  future:
+    - action: 'Adicionar EXPLAIN ANALYZE em CI para queries de listagem de projects e goals — confirmar uso dos novos índices após deploy'
+      refs: ['packages/db/src/schema/projects.ts', 'packages/db/src/schema/goals.ts']
