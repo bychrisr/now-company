@@ -241,6 +241,7 @@ export function NewAgentDialog() {
               resetDialogState();
               closeNewAgent();
             }}
+            aria-label="Close dialog"
           >
             <span className="text-lg leading-none">&times;</span>
           </Button>
