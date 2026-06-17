@@ -1,9 +1,10 @@
 ---
 epic_id: EPIC-004
 title: "Tech Debt — Database Schema Foundation"
-status: Proposed
+status: Done
 owner: "@pm (Morgan)"
 created: 2026-06-17
+closed: 2026-06-17
 priority: P0
 blocks_covered: [ORION-DB]
 discovery_ref: docs/db/DB-AUDIT.md
@@ -11,7 +12,7 @@ discovery_ref: docs/db/DB-AUDIT.md
 
 # EPIC-004: Tech Debt — Database Schema Foundation
 
-**Status:** 🟡 Proposed  
+**Status:** ✅ Done  
 **Owner:** @pm (Morgan)  
 **Priority:** P0 — Bloqueador para Personal Mode (ORION)  
 **Created:** 2026-06-17
@@ -123,12 +124,22 @@ Sem este epic, o modo Personal Company (ORION) não pode ser implementado e o sc
 
 ## Definition of Done
 
-- [ ] Migrations 0098–0100 geradas via `pnpm db:generate` e aplicadas com sucesso
-- [ ] `pnpm -r typecheck` passa sem erros
-- [ ] `pnpm test:run` passa sem regressões
-- [ ] `packages/db/src/schema/companies.ts` atualizado com os novos campos
-- [ ] `docs/db/DB-AUDIT.md` atualizado: D29, D30, D31, D32, D35 marcados como `✅ Resolvido`
-- [ ] PR reviewed por @dev (quality gate)
+- [x] Migrations 0098–0100 geradas via `pnpm db:generate` e aplicadas com sucesso
+- [x] `pnpm -r typecheck` passa sem erros
+- [x] `pnpm test:run` passa sem regressões
+- [x] `packages/db/src/schema/companies.ts` atualizado com os novos campos
+- [x] `docs/db/DB-AUDIT.md` atualizado: D29, D30, D31, D32, D35 marcados como `✅ Resolvido`
+- [x] QA gate formal por Quinn (@qa): 4.1 PASS · 4.2 CONCERNS (D05 audit corrigido) · 4.3 PASS
+
+## Scope Items Moved to Backlog
+
+Os seguintes itens estavam no scope original mas foram explicitamente deixados para sprint futuro durante o desenvolvimento:
+
+| Item | Débito | Motivo | Follow-up |
+|------|--------|--------|-----------|
+| `companies.feedback_data_sharing_consent_by_user_id` FK | D05 | `companies.ts` já modificado em 4.1; decidido não reabrí-lo | Story 4.4 |
+| `budget_transactions.authorized_by_user_id` FK | — | Citado no scope inicial; não coberto por nenhuma story | Backlog P2 |
+| `agent_checkouts.last_run_id` FK | — | Scope inicial citou `agent_checkouts`; Story 4.2 fez `agent_runtime_state` (tabela correta conforme schema real) | Verificar se `agent_checkouts` existe — pode ser scope equivocado |
 
 ---
 
