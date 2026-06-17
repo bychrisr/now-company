@@ -97,7 +97,7 @@ Todas as rotas board são **prefixadas** por `/:companyPrefix/` (ex: `/NOW/dashb
 
 ### 2.1 Fonte de tokens
 
-O projeto usa **Tailwind CSS v4** com `@theme inline` + variaveis CSS personalizadas. Nao ha arquivo de tokens separado — tudo esta em `ui/src/index.css` (28kb, 1065 linhas).
+O projeto usa **Tailwind CSS v4** com `@theme inline` + variaveis CSS personalizadas importadas de `ui/src/styles/tokens.css` (Resolvido na Story 5.3 - F09-F12).
 
 ### 2.2 Cores — Light Mode (oklch)
 
@@ -426,7 +426,7 @@ Limitacao: props sao apenas `string` — nao suporta ReactNode, links inline, ou
 
 ### 8.2 Problemas identificados
 
-- `Sidebar` usa `<aside>` sem `aria-label` — multiplas sidebars na pagina sao ambiguas para screen readers
+- **[RESOLVIDO - Story 5.3 - F13-F15]** Sidebar usa `<aside>` sem `aria-label` — adicionados `aria-label` descritivos às sidebars principal, de instância e de configurações.
 - `OrgChart` e SVG customizado sem roles ou labels ARIA — keyboard navigation impossivel
 - `KanbanBoard` sem roles ARIA de `grid` ou `listbox`
 - `EmptyState` renderiza `LucideIcon` sem `aria-hidden={true}` — sera anunciado como "image"
@@ -467,7 +467,7 @@ As 7 novas paginas (`/vault`, `/ask`, `/lunar`, `/kpi`, `/focus`, `/areas`) NAO 
 | D04 | `Goals`, `Activity` | Sem skeleton de loading adequado para o conteudo real | Medio | Baixo |
 | D05 | `OrgChart` | SVG/canvas sem ARIA — keyboard navigation impossivel | Alto | Alto |
 | D06 | `KanbanBoard` | Sem roles ARIA de grid/listbox — nao anunciavel por screen readers | Alto | Medio |
-| D07 | `Sidebar` | `<aside>` sem `aria-label` — multiplas sidebars sao ambiguas | Medio | Baixo |
+| D07 | `Sidebar` | [RESOLVIDO na Story 5.3] `<aside>` sem `aria-label` — adicionados labels | Medio | Baixo |
 | D08 | `MobileBottomNav` | 5 itens hardcoded — novas paginas inacessiveis no mobile | Alto | Medio |
 | D09 | Design System | `--radius: 0` flat com excecoes em chips/pills — inconsistencia visual | Medio | Medio |
 | D10 | Design System | Sem tokens de tipografia formais (tamanhos/pesos nao nomeados) | Medio | Medio |
@@ -480,7 +480,7 @@ As 7 novas paginas (`/vault`, `/ask`, `/lunar`, `/kpi`, `/focus`, `/areas`) NAO 
 | D17 | `CompanyContext` | `company.kind` NAO existe no tipo `Company` — condicional `personal` nao implementada | Alto | Medio |
 | D18 | `Sidebar`/OrgChart/Invites | Elementos team-only nao sao ocultados para `company.kind === 'personal'` — campo nem existe no schema | Alto | Alto |
 | D19 | `DesignGuide` (58kb) | Guia de design existe mas nao e referenciado no fluxo de dev | Baixo | Baixo |
-| D20 | `index.css` | MDXEditor, markdown e scroll misturados em 1065 linhas — sem separacao por camada | Baixo | Medio |
+| D20 | `index.css` | [RESOLVIDO na Story 5.3] Tokens extraídos para tokens.css, index.css limpo | Baixo | Medio |
 | D21 | Mobile geral | Novas paginas planejadas nao tem design mobile definido | Alto | Alto |
 | D22 | `EmptyState` | Icone `LucideIcon` sem `aria-hidden={true}` — sera anunciado como "image" | Medio | Baixo |
 | D23 | `PageSkeleton` | Sem variant para vault, ask, kpi, focus, areas | Medio | Baixo |
