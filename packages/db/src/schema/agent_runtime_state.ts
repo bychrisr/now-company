@@ -1,6 +1,7 @@
 import { pgTable, uuid, text, timestamp, jsonb, bigint, index } from "drizzle-orm/pg-core";
 import { agents } from "./agents.js";
 import { companies } from "./companies.js";
+import { heartbeatRuns } from "./heartbeat_runs.js";
 
 export const agentRuntimeState = pgTable(
   "agent_runtime_state",
@@ -10,7 +11,10 @@ export const agentRuntimeState = pgTable(
     adapterType: text("adapter_type").notNull(),
     sessionId: text("session_id"),
     stateJson: jsonb("state_json").$type<Record<string, unknown>>().notNull().default({}),
-    lastRunId: uuid("last_run_id"),
+    // Decisão técnica: Chave estrangeira referenciando a execução do heartbeat correspondente
+    // com onDelete "set null" para que possamos deletar registros de heartbeat_runs
+    // mais antigos sem apagar o estado atual do agente.
+    lastRunId: uuid("last_run_id").references(() => heartbeatRuns.id, { onDelete: "set null" }),
     lastRunStatus: text("last_run_status"),
     totalInputTokens: bigint("total_input_tokens", { mode: "number" }).notNull().default(0),
     totalOutputTokens: bigint("total_output_tokens", { mode: "number" }).notNull().default(0),

@@ -25,5 +25,8 @@ export const goals = pgTable(
   },
   (table) => ({
     companyIdx: index("goals_company_idx").on(table.companyId),
+    // Decisão técnica: Índice composto em (companyId, status) para otimizar queries
+    // que consultam os objetivos da empresa filtrando pelo status de progresso/planejamento.
+    companyStatusIdx: index("goals_company_status_idx").on(table.companyId, table.status),
   }),
 );

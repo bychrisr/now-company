@@ -1,15 +1,23 @@
-import { pgTable, text, timestamp, boolean } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, boolean, uniqueIndex } from "drizzle-orm/pg-core";
 
-export const authUsers = pgTable("user", {
-  id: text("id").primaryKey(),
-  name: text("name").notNull(),
-  email: text("email").notNull(),
-  emailVerified: boolean("email_verified").notNull().default(false),
-  image: text("image"),
-  locale: text("locale").notNull().default("en"),
-  createdAt: timestamp("created_at", { withTimezone: true }).notNull(),
-  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull(),
-});
+export const authUsers = pgTable(
+  "user",
+  {
+    id: text("id").primaryKey(),
+    name: text("name").notNull(),
+    email: text("email").notNull(),
+    emailVerified: boolean("email_verified").notNull().default(false),
+    image: text("image"),
+    locale: text("locale").notNull().default("en"),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull(),
+  },
+  (table) => ({
+    // Decisão técnica: Índice único na coluna de email para acelerar queries de autenticação/busca
+    // e prevenir duplicidade no nível físico do banco de dados.
+    emailUniqueIdx: uniqueIndex("user_email_unique_idx").on(table.email),
+  }),
+);
 
 export const authSessions = pgTable("session", {
   id: text("id").primaryKey(),

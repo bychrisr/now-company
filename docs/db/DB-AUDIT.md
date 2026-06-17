@@ -24,11 +24,11 @@
 
 | ID | Tabela | Coluna | Débito | Severidade | Esforço | Prioridade |
 |----|--------|--------|--------|------------|---------|------------|
-| D01 | `instance_user_roles` | `user_id` | `text NOT NULL` sem FK → `user.id` — risco de registros órfãos em cascata de deleção | 🔴 Alto | Baixo | P1 |
+| D01 | `instance_user_roles` | `user_id` | `text NOT NULL` sem FK → `user.id` — risco de registros órfãos em cascata de deleção | 🔴 Alto | Baixo | ✅ Resolvido |
 | D02 | `issues` | `assignee_user_id` | `text` sem FK → `user.id` — usuário deletado permanece referenciado | 🔴 Alto | Baixo | P1 |
 | D03 | `issues` | `created_by_user_id` | `text` sem FK → `user.id` | 🟡 Médio | Baixo | P2 |
-| D04 | `approvals` | `decided_by_user_id` | `text` sem FK → `user.id` — decisões de governança sem rastreabilidade garantida | 🔴 Alto | Baixo | P1 |
-| D05 | `companies` | `feedback_data_sharing_consent_by_user_id` | `text` sem FK → `user.id` — dado de consentimento LGPD sem integridade referencial | 🔴 Alto | Baixo | P1 |
+| D04 | `approvals` | `decided_by_user_id` | `text` sem FK → `user.id` — decisões de governança sem rastreabilidade garantida | 🔴 Alto | Baixo | ✅ Resolvido |
+| D05 | `companies` | `feedback_data_sharing_consent_by_user_id` | `text` sem FK → `user.id` — dado de consentimento LGPD sem integridade referencial | 🔴 Alto | Baixo | ✅ Resolvido |
 | D06 | `company_user_sidebar_preferences` | `user_id` | `text` sem FK → `user.id` | 🟢 Baixo | Baixo | P3 |
 | D07 | `user_sidebar_preferences` | `user_id` | `text` sem FK → `user.id` | 🟢 Baixo | Baixo | P3 |
 | D08 | `invites` | `invited_by_user_id` | `text` sem FK → `user.id` | 🟡 Médio | Baixo | P2 |
@@ -42,7 +42,7 @@
 
 | ID | Tabela | Coluna | Débito | Severidade | Esforço | Prioridade |
 |----|--------|--------|--------|------------|---------|------------|
-| D14 | `agent_runtime_state` | `last_run_id` | `uuid` sem FK → `heartbeat_runs.id` — estado stale sem validação | 🔴 Alto | Médio | P1 |
+| D14 | `agent_runtime_state` | `last_run_id` | `uuid` sem FK → `heartbeat_runs.id` — estado stale sem validação | 🔴 Alto | Médio | ✅ Resolvido |
 | D15 | `routines` | `latest_revision_id` | `uuid` sem FK → `routine_revisions.id` — circular ref intencional mas sem constraint | 🟡 Médio | Médio | P2 |
 | D16 | `documents` | `latest_revision_id` | `uuid` sem FK → `document_revisions.id` — mesmo padrão de D15 | 🟡 Médio | Médio | P2 |
 | D17 | `agent_config_revisions` | `rolled_back_from_revision_id` | `uuid` sem FK self-referência → `agent_config_revisions.id` | 🟡 Médio | Médio | P2 |
@@ -79,9 +79,9 @@
 
 | ID | Tabela | Coluna sem índice | Impacto | Severidade | Esforço | Prioridade |
 |----|--------|------------------|---------|------------|---------|------------|
-| D31 | `user` | `email` — sem índice único | Auth lookup sem índice — vulnerável a e-mails duplicados e full seq scan | 🔴 Alto | Baixo | P1 |
-| D32 | `projects` | Sem índice `(company_id, status)` | Listagem de projetos por status faz seq scan em tabelas grandes | 🟡 Médio | Baixo | P2 |
-| D33 | `goals` | Sem índice `(company_id, status)` | Mesma situação de D32 para goals | 🟡 Médio | Baixo | P2 |
+| D31 | `user` | `email` — sem índice único | Auth lookup sem índice — vulnerável a e-mails duplicados e full seq scan | 🔴 Alto | Baixo | ✅ Resolvido |
+| D32 | `projects` | Sem índice `(company_id, status)` | Listagem de projetos por status faz seq scan em tabelas grandes | 🟡 Médio | Baixo | ✅ Resolvido |
+| D33 | `goals` | Sem índice `(company_id, status)` | Mesma situação de D32 para goals | 🟡 Médio | Baixo | ✅ Resolvido |
 | D34 | `approval_comments` | Sem índice compound `(approval_id, created_at)` | Paginação de comentários faz sort sem índice em volume alto | 🟢 Baixo | Baixo | P3 |
 
 ### 1.7 Outros débitos identificados

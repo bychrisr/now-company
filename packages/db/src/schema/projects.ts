@@ -26,5 +26,8 @@ export const projects = pgTable(
   },
   (table) => ({
     companyIdx: index("projects_company_idx").on(table.companyId),
+    // Decisão técnica: Índice composto em (companyId, status) para otimizar a performance
+    // de queries frequentes que buscam/filtram projetos de uma empresa por status.
+    companyStatusIdx: index("projects_company_status_idx").on(table.companyId, table.status),
   }),
 );
