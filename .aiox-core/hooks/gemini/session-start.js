@@ -1,0 +1,1 @@
+../../../.gemini/hooks/session-start.cjs

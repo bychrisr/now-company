@@ -1,0 +1,1 @@
+../../../.gemini/hooks/before-tool.cjs
