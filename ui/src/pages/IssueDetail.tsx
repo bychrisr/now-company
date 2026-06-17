@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent, type DragEvent, type ReactNode, type Ref } from "react";
+import { memo, useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent, type DragEvent, type ReactNode, type Ref, Suspense, lazy } from "react";
 import { pickTextColorForPillBg } from "@/lib/color-contrast";
 import { Link, useLocation, useNavigate, useNavigationType, useParams } from "@/lib/router";
 import { useInfiniteQuery, useQuery, useMutation, useQueryClient, type InfiniteData, type QueryClient } from "@tanstack/react-query";
@@ -63,7 +63,8 @@ import { useProjectOrder } from "../hooks/useProjectOrder";
 import { relativeTime, cn, formatDurationMs, formatTokens, visibleRunCostUsd } from "../lib/utils";
 import { ApprovalCard } from "../components/ApprovalCard";
 import { InlineEditor } from "../components/InlineEditor";
-import { IssueChatThread, type IssueChatComposerHandle } from "../components/IssueChatThread";
+import type { IssueChatComposerHandle } from "../components/IssueChatThread";
+import { PageSkeleton } from "../components/PageSkeleton";
 import { IssueContinuationHandoff } from "../components/IssueContinuationHandoff";
 import { IssueDocumentsSection } from "../components/IssueDocumentsSection";
 import { IssueSiblingNavigation } from "../components/IssueSiblingNavigation";
@@ -155,6 +156,10 @@ import {
   type SuggestTasksInteraction,
   type IssueTreeControlMode,
 } from "@paperclipai/shared";
+
+const IssueChatThread = lazy(() =>
+  import("../components/IssueChatThread").then((m) => ({ default: m.IssueChatThread }))
+);
 
 type CommentReassignment = IssueCommentReassignment;
 type ActionableIssueThreadInteraction = SuggestTasksInteraction | RequestConfirmationInteraction;
@@ -888,73 +893,75 @@ const IssueDetailChatTab = memo(function IssueDetailChatTab({
           </Button>
         </div>
       ) : null}
-      <IssueChatThread
-        composerRef={composerRef}
-        comments={commentsWithRunMeta}
-        interactions={interactions}
-        feedbackVotes={feedbackVotes}
-        feedbackDataSharingPreference={feedbackDataSharingPreference}
-        feedbackTermsUrl={feedbackTermsUrl}
-        linkedRuns={timelineRuns}
-        timelineEvents={timelineEvents}
-        liveRuns={resolvedLiveRuns}
-        activeRun={resolvedActiveRun}
-        issueId={issueId}
-        blockedBy={blockedBy ?? []}
-        blockerAttention={blockerAttention}
-        successfulRunHandoff={successfulRunHandoff}
-        scheduledRetry={scheduledRetry}
-        recoveryAction={recoveryAction ?? null}
-        onResolveRecoveryAction={onResolveRecoveryAction}
-        canFalsePositiveRecoveryAction={canFalsePositiveRecoveryAction}
-        legacyRecoverySourceIssue={legacyRecoverySourceIssue ?? null}
-        companyId={companyId}
-        projectId={projectId}
-        issueStatus={issueStatus}
-        agentMap={agentMap}
-        currentUserId={currentUserId}
-        userLabelMap={userLabelMap}
-        userProfileMap={userProfileMap}
-        draftKey={draftKey}
-        enableReassign
-        reassignOptions={reassignOptions}
-        currentAssigneeValue={currentAssigneeValue}
-        suggestedAssigneeValue={suggestedAssigneeValue}
-        mentions={mentions}
-        composerDisabledReason={composerDisabledReason}
-        composerHint={composerHint}
-        onVote={onVote}
-        onAdd={onAdd}
-        imageUploadHandler={onImageUpload}
-        onAttachImage={onAttachImage}
-        onInterruptQueued={onInterruptQueued}
-        onCancelQueued={onCancelQueued}
-        interruptingQueuedRunId={interruptingQueuedRunId}
-        stoppingRunId={pausingWorkRunId}
-        onStopRun={onPauseWorkRun}
-        stopRunLabel="Pause work"
-        stoppingRunLabel="Pausing..."
-        stopRunVariant="pause"
-        onAcceptInteraction={onAcceptInteraction}
-        onRejectInteraction={onRejectInteraction}
-        onSubmitInteractionAnswers={(interaction, answers) =>
-          onSubmitInteractionAnswers(interaction, answers)
-        }
-        onCancelInteraction={onCancelInteraction}
-        issueWorkMode={issueWorkMode}
-        onWorkModeChange={onWorkModeChange}
-        onCancelRun={runningIssueRun && onPauseWorkRun
-          ? async () => {
-              await onPauseWorkRun(runningIssueRun.id);
-            }
-          : undefined}
-        onImageClick={onImageClick}
-        onRefreshLatestComments={onRefreshLatestComments}
-        assigneeUserId={assigneeUserId}
-        onResumeFromBacklog={onResumeFromBacklog}
-        resumeFromBacklogPending={resumeFromBacklogPending}
-        footer={footer}
-      />
+      <Suspense fallback={<PageSkeleton variant="issue-chat" />}>
+        <IssueChatThread
+          composerRef={composerRef}
+          comments={commentsWithRunMeta}
+          interactions={interactions}
+          feedbackVotes={feedbackVotes}
+          feedbackDataSharingPreference={feedbackDataSharingPreference}
+          feedbackTermsUrl={feedbackTermsUrl}
+          linkedRuns={timelineRuns}
+          timelineEvents={timelineEvents}
+          liveRuns={resolvedLiveRuns}
+          activeRun={resolvedActiveRun}
+          issueId={issueId}
+          blockedBy={blockedBy ?? []}
+          blockerAttention={blockerAttention}
+          successfulRunHandoff={successfulRunHandoff}
+          scheduledRetry={scheduledRetry}
+          recoveryAction={recoveryAction ?? null}
+          onResolveRecoveryAction={onResolveRecoveryAction}
+          canFalsePositiveRecoveryAction={canFalsePositiveRecoveryAction}
+          legacyRecoverySourceIssue={legacyRecoverySourceIssue ?? null}
+          companyId={companyId}
+          projectId={projectId}
+          issueStatus={issueStatus}
+          agentMap={agentMap}
+          currentUserId={currentUserId}
+          userLabelMap={userLabelMap}
+          userProfileMap={userProfileMap}
+          draftKey={draftKey}
+          enableReassign
+          reassignOptions={reassignOptions}
+          currentAssigneeValue={currentAssigneeValue}
+          suggestedAssigneeValue={suggestedAssigneeValue}
+          mentions={mentions}
+          composerDisabledReason={composerDisabledReason}
+          composerHint={composerHint}
+          onVote={onVote}
+          onAdd={onAdd}
+          imageUploadHandler={onImageUpload}
+          onAttachImage={onAttachImage}
+          onInterruptQueued={onInterruptQueued}
+          onCancelQueued={onCancelQueued}
+          interruptingQueuedRunId={interruptingQueuedRunId}
+          stoppingRunId={pausingWorkRunId}
+          onStopRun={onPauseWorkRun}
+          stopRunLabel="Pause work"
+          stoppingRunLabel="Pausing..."
+          stopRunVariant="pause"
+          onAcceptInteraction={onAcceptInteraction}
+          onRejectInteraction={onRejectInteraction}
+          onSubmitInteractionAnswers={(interaction, answers) =>
+            onSubmitInteractionAnswers(interaction, answers)
+          }
+          onCancelInteraction={onCancelInteraction}
+          issueWorkMode={issueWorkMode}
+          onWorkModeChange={onWorkModeChange}
+          onCancelRun={runningIssueRun && onPauseWorkRun
+            ? async () => {
+                await onPauseWorkRun(runningIssueRun.id);
+              }
+            : undefined}
+          onImageClick={onImageClick}
+          onRefreshLatestComments={onRefreshLatestComments}
+          assigneeUserId={assigneeUserId}
+          onResumeFromBacklog={onResumeFromBacklog}
+          resumeFromBacklogPending={resumeFromBacklogPending}
+          footer={footer}
+        />
+      </Suspense>
     </div>
   );
 });

@@ -9,10 +9,55 @@ interface PageSkeletonProps {
     | "approvals"
     | "costs"
     | "inbox"
-    | "org-chart";
+    | "org-chart"
+    | "agent-detail"
+    | "issue-chat";
 }
 
 export function PageSkeleton({ variant = "list" }: PageSkeletonProps) {
+  if (variant === "agent-detail") {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center gap-4">
+          <Skeleton className="h-16 w-16 rounded-lg" />
+          <div className="space-y-2">
+            <Skeleton className="h-6 w-48" />
+            <Skeleton className="h-4 w-32" />
+          </div>
+        </div>
+        <div className="flex items-center gap-2 border-b-2 border-border">
+          <Skeleton className="h-10 w-24" />
+          <Skeleton className="h-10 w-24" />
+          <Skeleton className="h-10 w-24" />
+        </div>
+        <div className="space-y-4">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <Skeleton key={i} className="h-20 w-full" />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (variant === "issue-chat") {
+    return (
+      <div className="space-y-4">
+        <div className="space-y-2">
+          {Array.from({ length: 2 }).map((_, i) => (
+            <div key={i} className="flex items-start gap-2">
+              <Skeleton className="h-8 w-8 rounded-full" />
+              <div className="flex-1 space-y-1">
+                <Skeleton className="h-4 w-24" />
+                <Skeleton className="h-12 w-full" />
+              </div>
+            </div>
+          ))}
+        </div>
+        <Skeleton className="h-24 w-full" />
+      </div>
+    );
+  }
+
   if (variant === "dashboard") {
     return (
       <div className="space-y-6">
