@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { spawnSync } from "node:child_process";
+import { spawn, spawnSync } from "node:child_process";
 import { mkdirSync, mkdtempSync, readdirSync, statSync } from "node:fs";
 import os from "node:os";
 import path from "node:path";
@@ -233,6 +233,10 @@ function selectSerializedSuites(routeTests, shardIndex, shardCount) {
   return routeTests.filter((_, index) => index % shardCount === shardIndex);
 }
 
+// URL admin do postgres compartilhado (template). Quando setada, é propagada para os processos filhos
+// de teste via env PAPERCLIP_SHARED_TEST_PG_URL — eles clonam o template ao invés de subir postgres novo.
+let sharedTemplatePgAdminUrl = null;
+
 function runVitest(args, label) {
   console.log(`\n[test:run] ${label}`);
   invocationIndex += 1;
@@ -245,6 +249,10 @@ function runVitest(args, label) {
     PAPERCLIP_INSTANCE_ID: `vt-${process.pid}-${invocationIndex}`,
     TMPDIR: path.join(testRoot, "t"),
   };
+  // Propaga a URL do postgres compartilhado para o processo filho, se o sidecar estiver ativo.
+  if (sharedTemplatePgAdminUrl) {
+    env.PAPERCLIP_SHARED_TEST_PG_URL = sharedTemplatePgAdminUrl;
+  }
   mkdirSync(env.PAPERCLIP_HOME, { recursive: true });
   mkdirSync(env.TMPDIR, { recursive: true });
   const result = spawnSync("pnpm", ["exec", "vitest", "run", ...args], {
@@ -316,6 +324,98 @@ function runSerializedSuites(routeTests, shardIndex, shardCount) {
   }
 }
 
+// Referência ao processo sidecar do postgres compartilhado, para teardown garantido em qualquer saída.
+let sharedTemplatePgProcess = null;
+
+// Mata o sidecar de forma síncrona. Registrado em process.on("exit") porque runVitest pode chamar
+// process.exit() ao falhar um teste — sem isso, o postgres compartilhado vazaria.
+function killSharedTemplatePgSync() {
+  if (sharedTemplatePgProcess && !sharedTemplatePgProcess.killed) {
+    try {
+      sharedTemplatePgProcess.kill("SIGTERM");
+    } catch (error) {
+      // Nunca silenciar: loga, mas não relança — estamos em handler de saída.
+      console.error(`[test:run] Falha ao encerrar sidecar do postgres compartilhado: ${error.message}`);
+    }
+  }
+}
+
+process.on("exit", killSharedTemplatePgSync);
+
+// Sobe o sidecar do postgres compartilhado e aguarda a linha "SHARED_PG_READY <url>" no stdout.
+// Retorna a URL admin, que é exportada para os processos filhos de teste via runVitest.
+function startSharedTemplatePostgres() {
+  // tsx resolve dentro do pacote @paperclipai/db, não no root. Usa o mesmo padrão do dev-runner:
+  // `pnpm --filter @paperclipai/db exec tsx <path>` garante que tsx e os imports do workspace resolvam.
+  const sidecarPath = path.join("src", "shared-template-pg-sidecar.ts");
+  console.log("\n[test:run] iniciando postgres compartilhado (template) para suite serializada...");
+
+  const child = spawn(
+    "pnpm",
+    ["--filter", "@paperclipai/db", "exec", "tsx", sidecarPath],
+    {
+      cwd: repoRoot,
+      env: { ...process.env },
+      stdio: ["ignore", "pipe", "inherit"],
+    },
+  );
+  sharedTemplatePgProcess = child;
+
+  // Espera bloqueante pela linha de "pronto". Usa Atomics.wait sobre o stream não seria trivial;
+  // ao invés disso, fazemos um loop síncrono lendo eventos via deasync-free approach: spawnSync não
+  // serve aqui (o processo precisa ficar vivo). Resolvemos com uma Promise + execução top-level await.
+  return new Promise((resolve, reject) => {
+    let buffer = "";
+    let settled = false;
+
+    const onData = (chunk) => {
+      buffer += chunk.toString();
+      const newlineIndex = buffer.indexOf("\n");
+      if (newlineIndex === -1) return;
+      const line = buffer.slice(0, newlineIndex).trim();
+      if (line.startsWith("SHARED_PG_READY ")) {
+        settled = true;
+        child.stdout.off("data", onData);
+        const url = line.slice("SHARED_PG_READY ".length).trim();
+        console.log("[test:run] postgres compartilhado pronto.");
+        resolve(url);
+      }
+    };
+
+    child.stdout.on("data", onData);
+
+    child.on("exit", (code) => {
+      if (!settled) {
+        settled = true;
+        reject(new Error(`Sidecar do postgres compartilhado saiu antes de ficar pronto (code ${code}).`));
+      }
+    });
+
+    child.on("error", (error) => {
+      if (!settled) {
+        settled = true;
+        reject(new Error(`Falha ao iniciar sidecar do postgres compartilhado: ${error.message}`));
+      }
+    });
+  });
+}
+
+// Encerra o sidecar de forma limpa e aguarda sua saída, garantindo teardown do postgres.
+function stopSharedTemplatePostgres() {
+  const child = sharedTemplatePgProcess;
+  if (!child || child.killed) return Promise.resolve();
+  console.log("\n[test:run] encerrando postgres compartilhado...");
+  return new Promise((resolve) => {
+    child.on("exit", () => resolve());
+    try {
+      child.kill("SIGTERM");
+    } catch (error) {
+      console.error(`[test:run] Falha ao encerrar sidecar: ${error.message}`);
+      resolve();
+    }
+  });
+}
+
 const routeTests = walk(serverTestsDir)
   .filter((file) => isRouteOrAuthzTest(toRepoPath(file)))
   .map((file) => ({
@@ -357,5 +457,27 @@ if (options.mode === generalModeName || options.mode === allModeName) {
 }
 
 if (options.mode === serializedModeName || options.mode === allModeName) {
-  runSerializedSuites(routeTests, options.shardIndex ?? 0, options.shardCount ?? 1);
+  // Otimização: sobe UM postgres compartilhado (template com migrations) antes do loop serializado.
+  // Cada arquivo de teste clona o template (CREATE DATABASE ... TEMPLATE) ao invés de subir postgres
+  // novo e reaplicar 290 migrations — reduzindo drasticamente o tempo total da suite serializada.
+  // Pode ser desativado via PAPERCLIP_DISABLE_SHARED_TEST_PG=1 (fallback ao comportamento original).
+  const sharedPgDisabled = process.env.PAPERCLIP_DISABLE_SHARED_TEST_PG === "1";
+  if (!sharedPgDisabled) {
+    try {
+      sharedTemplatePgAdminUrl = await startSharedTemplatePostgres();
+    } catch (error) {
+      // Falha ao subir o postgres compartilhado: aborta com erro claro (não cai silenciosamente
+      // no modo lento, para que o problema seja visível e corrigido).
+      console.error(`[test:run] ${error.message}`);
+      process.exit(1);
+    }
+  }
+
+  try {
+    runSerializedSuites(routeTests, options.shardIndex ?? 0, options.shardCount ?? 1);
+  } finally {
+    // Teardown limpo no caminho feliz. Em caso de falha de teste, runVitest chama process.exit()
+    // e o handler process.on("exit") -> killSharedTemplatePgSync garante o encerramento do sidecar.
+    await stopSharedTemplatePostgres();
+  }
 }
