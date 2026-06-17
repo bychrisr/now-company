@@ -1382,7 +1382,7 @@ function LatestRunCard({ runs, agentId }: { runs: HeartbeatRun[]; agentId: strin
             </span>
           )}
           {isLive ? "Live Run" : "Latest Run"}
-        </h3>
+        </h2>
         <Link
           to={`/agents/${agentId}/runs/${run.id}`}
           className="shrink-0 text-xs text-muted-foreground hover:text-foreground transition-colors no-underline"
