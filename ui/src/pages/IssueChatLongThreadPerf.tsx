@@ -1,7 +1,13 @@
-import { Profiler, useEffect, useLayoutEffect, useMemo, useRef, useState, type ProfilerOnRenderCallback } from "react";
+import { Profiler, Suspense, lazy, useEffect, useLayoutEffect, useMemo, useRef, useState, type ProfilerOnRenderCallback } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { IssueChatThread } from "../components/IssueChatThread";
+import { PageSkeleton } from "@/components/PageSkeleton";
+
+// Lazy loading de IssueChatThread — esta página dev-only de perf também precisa
+// importar dinamicamente para não reancorar o componente no chunk principal (AC #6).
+const IssueChatThread = lazy(() =>
+  import("../components/IssueChatThread").then((m) => ({ default: m.IssueChatThread })),
+);
 import {
   issueChatLongThreadAgentMap,
   issueChatLongThreadComments,
@@ -158,21 +164,23 @@ export function IssueChatLongThreadPerf() {
           </Card>
 
           <Profiler id="issue-chat-long-thread" onRender={handleRender}>
-            <IssueChatThread
-              comments={issueChatLongThreadComments}
-              linkedRuns={issueChatLongThreadLinkedRuns}
-              timelineEvents={issueChatLongThreadEvents}
-              liveRuns={issueChatLongThreadLiveRuns}
-              issueStatus="in_progress"
-              agentMap={issueChatLongThreadAgentMap}
-              currentUserId="user-board"
-              onAdd={noop}
-              showComposer={false}
-              showJumpToLatest={false}
-              enableLiveTranscriptPolling={false}
-              transcriptsByRunId={issueChatLongThreadTranscriptsByRunId}
-              hasOutputForRun={(runId) => issueChatLongThreadTranscriptsByRunId.has(runId)}
-            />
+            <Suspense fallback={<PageSkeleton variant="issue-chat" />}>
+              <IssueChatThread
+                comments={issueChatLongThreadComments}
+                linkedRuns={issueChatLongThreadLinkedRuns}
+                timelineEvents={issueChatLongThreadEvents}
+                liveRuns={issueChatLongThreadLiveRuns}
+                issueStatus="in_progress"
+                agentMap={issueChatLongThreadAgentMap}
+                currentUserId="user-board"
+                onAdd={noop}
+                showComposer={false}
+                showJumpToLatest={false}
+                enableLiveTranscriptPolling={false}
+                transcriptsByRunId={issueChatLongThreadTranscriptsByRunId}
+                hasOutputForRun={(runId) => issueChatLongThreadTranscriptsByRunId.has(runId)}
+              />
+            </Suspense>
           </Profiler>
         </main>
 

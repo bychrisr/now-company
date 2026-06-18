@@ -51,6 +51,7 @@ import {
 } from "./IssueColumns";
 import { StatusIcon } from "./StatusIcon";
 import { EmptyState } from "./EmptyState";
+import { ErrorState } from "./ErrorState";
 import { Identity } from "./Identity";
 import { IssueGroupHeader } from "./IssueGroupHeader";
 import { IssueFiltersPopover } from "./IssueFiltersPopover";
@@ -1561,7 +1562,7 @@ export function IssuesList({
       </div>
 
       {isLoading && <PageSkeleton variant="issues-list" />}
-      {error && <p className="text-sm text-destructive">{error.message}</p>}
+      {error && <ErrorState message={error.message} />}
       {!searchWithinLoadedIssues && normalizedIssueSearch.length > 0 && searchedIssues.length === ISSUE_SEARCH_RESULT_LIMIT && (
         <p className="text-xs text-muted-foreground">
           Showing up to {ISSUE_SEARCH_RESULT_LIMIT} matches. Refine the search to narrow further.

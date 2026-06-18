@@ -1,3 +1,5 @@
+import * as React from "react";
+import { Suspense } from "react";
 import { Navigate, Outlet, Route, Routes, useLocation, useParams } from "@/lib/router";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "@/i18n";
@@ -7,8 +9,8 @@ import { CloudAccessGate } from "./components/CloudAccessGate";
 import { Dashboard } from "./pages/Dashboard";
 import { DashboardLive } from "./pages/DashboardLive";
 import { Companies } from "./pages/Companies";
+import { PageSkeleton } from "./components/PageSkeleton";
 import { Agents } from "./pages/Agents";
-import { AgentDetail } from "./pages/AgentDetail";
 import { Projects } from "./pages/Projects";
 import { ProjectDetail } from "./pages/ProjectDetail";
 import { ProjectWorkspaceDetail } from "./pages/ProjectWorkspaceDetail";
@@ -64,6 +66,22 @@ import { useDialogActions } from "./context/DialogContext";
 import { loadLastInboxTab } from "./lib/inbox";
 import { shouldRedirectCompanylessRouteToOnboarding } from "./lib/onboarding-route";
 
+const AgentDetail = React.lazy(() =>
+  import("./pages/AgentDetail").then((m) => ({ default: m.AgentDetail }))
+);
+
+// Wrapper para a página lazy de AgentDetail. O Suspense precisa estar DENTRO do
+// `element` prop de cada <Route> (padrão canônico do React Router v6). Envolver
+// <Route> diretamente com <Suspense> não é suportado e pode fazer rotas serem
+// silenciosamente ignoradas em upgrades do router.
+function AgentDetailPage() {
+  return (
+    <Suspense fallback={<PageSkeleton variant="agent-detail" />}>
+      <AgentDetail />
+    </Suspense>
+  );
+}
+
 function boardRoutes() {
   return (
     <>
@@ -95,9 +113,9 @@ function boardRoutes() {
       <Route path="agents/paused" element={<Agents />} />
       <Route path="agents/error" element={<Agents />} />
       <Route path="agents/new" element={<NewAgent />} />
-      <Route path="agents/:agentId" element={<AgentDetail />} />
-      <Route path="agents/:agentId/:tab" element={<AgentDetail />} />
-      <Route path="agents/:agentId/runs/:runId" element={<AgentDetail />} />
+      <Route path="agents/:agentId" element={<AgentDetailPage />} />
+      <Route path="agents/:agentId/:tab" element={<AgentDetailPage />} />
+      <Route path="agents/:agentId/runs/:runId" element={<AgentDetailPage />} />
       <Route path="projects" element={<Projects />} />
       <Route path="projects/:projectId" element={<ProjectDetail />} />
       <Route path="projects/:projectId/overview" element={<ProjectDetail />} />

@@ -11,6 +11,8 @@ import { cn } from "../lib/utils";
 import { PageTabBar } from "../components/PageTabBar";
 import { Tabs } from "@/components/ui/tabs";
 import { ShieldCheck } from "lucide-react";
+import { ErrorState } from "../components/ErrorState";
+import { EmptyState } from "../components/EmptyState";
 import { ApprovalCard } from "../components/ApprovalCard";
 import { PageSkeleton } from "../components/PageSkeleton";
 
@@ -31,7 +33,7 @@ export function Approvals() {
     setBreadcrumbs([{ label: t("pages.approvals.title", "Approvals") }]);
   }, [setBreadcrumbs, t]);
 
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading, error, refetch } = useQuery({
     queryKey: queryKeys.approvals.list(selectedCompanyId!),
     queryFn: () => approvalsApi.list(selectedCompanyId!),
     enabled: !!selectedCompanyId,
@@ -102,16 +104,14 @@ export function Approvals() {
         </Tabs>
       </div>
 
-      {error && <p className="text-sm text-destructive">{error.message}</p>}
-      {actionError && <p className="text-sm text-destructive">{actionError}</p>}
+      {error && <ErrorState message={error.message} retry={refetch} />}
+      {actionError && <ErrorState message={actionError} />}
 
-      {filtered.length === 0 && (
-        <div className="flex flex-col items-center justify-center py-16 text-center">
-          <ShieldCheck className="h-8 w-8 text-muted-foreground/30 mb-3" />
-          <p className="text-sm text-muted-foreground">
-            {statusFilter === "pending" ? t("pages.approvals.noPendingApprovals", "No pending approvals.") : t("pages.approvals.noApprovalsYet", "No approvals yet.")}
-          </p>
-        </div>
+      {!error && filtered.length === 0 && (
+        <EmptyState
+          icon={ShieldCheck}
+          message={statusFilter === "pending" ? t("pages.approvals.noPendingApprovals", "No pending approvals.") : t("pages.approvals.noApprovalsYet", "No approvals yet.")}
+        />
       )}
 
       {filtered.length > 0 && (
